@@ -10,6 +10,20 @@ function saltoDeLinea(){
     tab.textContent += "\n";
 }
 
+
+function copiarAPortaPapeles(){
+    let textoCopiado = document.getElementById("tab");
+
+    textoCopiado.select();
+    textoCopiado.setSelectionRange(0, 99999);
+
+    navigator.clipboard.writeText(textoCopiado.value);
+
+    alert("Tab copiada al portapapeles");
+}
+
+
+
 function createRipple(event) {
     const button = event.currentTarget;
     const circle = document.createElement("span");

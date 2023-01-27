@@ -39,6 +39,12 @@ button{
     border: 2px solid #645A78;
 }
 
+.copyBtn{
+    width: 20vw;
+    left: 40%;
+    margin-top: 10px;
+}
+
 span.ripple {
     position: absolute;
     border-radius: 50%;
