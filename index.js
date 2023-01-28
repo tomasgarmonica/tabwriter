@@ -21,7 +21,7 @@ function saltoDeLinea(){
 
 
 function copiarAPortaPapeles(){
-    let textoCopiado = document.getElementById("tab");
+    let textoCopiado = document.getElementById("tab-el");
 
     textoCopiado.select();
     textoCopiado.setSelectionRange(0, 99999);

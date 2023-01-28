@@ -20,9 +20,10 @@
     justify-content: center;
 }
 
-#tab{
+#tab-el{
     width: 60vw;
     height: 20vh;
+    margin-top: 10px;
 }
 
 button{
