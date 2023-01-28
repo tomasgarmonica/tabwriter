@@ -1,13 +1,22 @@
-let tab = document.getElementById("tab");
+let tabEl = document.getElementById("tab-el");
+
+let tab = [];
+
+$array = preg_split("\n", $string);
 
 function celdaPulsada(celda){
-    tab.textContent += celda + " ";
+    tab.push(celda)
+    tabEl.textContent = tab.join(" ")
 }
 
-
+function borrar(){
+    tab.pop()
+    tabEl.textContent = tab.join(" ")
+}
 
 function saltoDeLinea(){
-    tab.textContent += "\n";
+    tab.push("\n")
+    tabEl.textContent = tab.join(" ")
 }
 
 
