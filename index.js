@@ -1,4 +1,9 @@
 let tabEl = document.getElementById("tab-el");
+let aebtn = document.getElementById("ae-btn");
+let uabtn = document.getElementById("ua-btn");
+let aubtn = document.getElementById("au-btn");
+let uaubtn = document.getElementById("uau-btn");
+let aestate = true;
 
 let tab = [];
 
@@ -17,6 +22,20 @@ function borrar(){
 function saltoDeLinea(){
     tab.push("\n")
     tabEl.textContent = tab.join(" ")
+}
+
+function aebtnstate(){
+    if(aestate){
+        uabtn.innerText = "ue"
+        aubtn.innerText = "eu"
+        uaubtn.innerText = "ueu"
+        aestate = false;
+    } else {
+        uabtn.innerText = "ua"
+        aubtn.innerText = "au"
+        uaubtn.innerText = "uau"
+        aestate = true
+    }
 }
 
 

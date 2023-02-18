@@ -26,6 +26,17 @@
     margin-top: 10px;
 }
 
+.expresion{
+    display: flex;
+    justify-content: space-between;
+    margin-left: 10%;
+    margin-right: 10%;
+}
+
+.expresion > button{
+    margin: 5px;
+}
+
 button{
     position: relative;
     overflow: hidden;

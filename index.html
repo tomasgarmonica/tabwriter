@@ -13,9 +13,6 @@
     </header>
     <main>
         <div class="armonica">
-            <div class="col-1 row-1">
-                <button onclick="saltoDeLinea()">Salto</button>
-            </div>
             <div class="col-10 row-1">
                 <button onclick="celdaPulsada(innerText)">10bb</button>
             </div>
@@ -166,10 +163,12 @@
         </div>
         
         <div class="expresion">
-            <button onclick="celdaPulsada(innerText)">ua</button>
-            <button onclick="celdaPulsada(innerText)">au</button>
-            <button onclick="celdaPulsada(innerText)">uau</button>
+            <button id="ua-btn" onclick="celdaPulsada(innerText)">ua</button>
+            <button id="au-btn" onclick="celdaPulsada(innerText)">au</button>
+            <button id="uau-btn" onclick="celdaPulsada(innerText)">uau</button>
+            <button id="ae-btn" onclick="aebtnstate()">a/e</button>
             <button onclick="celdaPulsada(innerText)">_</button>
+            <button onclick="saltoDeLinea()">Salto</button>
             <button onclick="borrar()">Borrar</button>
         </div>
 
