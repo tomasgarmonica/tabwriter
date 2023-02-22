@@ -7,8 +7,6 @@ let aestate = true;
 
 let tab = [];
 
-$array = preg_split("\n", $string);
-
 function celdaPulsada(celda){
     tab.push(celda)
     tabEl.textContent = tab.join(" ")
