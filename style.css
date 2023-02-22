@@ -51,6 +51,7 @@ button{
     cursor: pointer;
     background-color: white;
     border: 2px solid #645A78;
+    touch-action: manipulation;
 }
 
 .copyBtn{
