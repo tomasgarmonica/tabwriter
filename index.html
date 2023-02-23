@@ -4,15 +4,16 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width, height=device-height, target-densitydpi=device-dpi">
+    <link rel="icon" href="favicon.ico">
     <link rel="stylesheet" href="style.css">
     <title>TabWriter</title>
 </head>
 <body>
     <header>
-
+        <h1>TabWriter</h1>
     </header>
     <main>
-        <div class="armonica">
+        <div id="armo-el" class="armonica">
             <div class="col-10 row-1">
                 <button onclick="celdaPulsada(innerText)">10bb</button>
             </div>
@@ -178,6 +179,160 @@
         </div>
         <div>
             <button class="copyBtn" onclick="copiarAPortaPapeles()">Copiar</button>
+        </div>
+
+        <div class="ref-ttl">
+            <h2 >Referencia Teclado</h2>
+        </div>
+
+        <div class="armonica-ref">
+            <div class="col-10 row-1">
+                <button onclick="celdaPulsada('10bb')">'</button>
+            </div>
+            <div class="col-1 row-2">
+                <button onclick="celdaPulsada('1ob')">1</button>
+            </div>
+            <div class="col-4 row-2">
+                <button onclick="celdaPulsada('4ob')">4</button>
+            </div>
+            <div class="col-5 row-2">
+                <button onclick="celdaPulsada('5ob')">5</button>
+            </div>
+            <div class="col-6 row-2">
+                <button onclick="celdaPulsada('6ob')">6</button>
+            </div>
+            <div class="col-8 row-2">
+                <button onclick="celdaPulsada('8b')">8</button>
+            </div>
+            <div class="col-9 row-2">
+                <button onclick="celdaPulsada('9b')">9</button>
+            </div>
+            <div class="col-10 row-2">
+                <button onclick="celdaPulsada('10')">0</button>
+            </div>
+            <div class="col-1 row-3">
+                <button onclick="celdaPulsada('1')">Q</button>
+            </div>
+            <div class="col-2 row-3">
+                <button onclick="celdaPulsada('2')">W</button>
+            </div>
+            <div class="col-3 row-3">
+                <button onclick="celdaPulsada('3')">E</button>
+            </div>
+            <div class="col-4 row-3">
+                <button onclick="celdaPulsada('4')">R</button>
+            </div>
+            <div class="col-5 row-3">
+                <button onclick="celdaPulsada('5')">T</button>
+            </div>
+            <div class="col-6 row-3">
+                <button onclick="celdaPulsada('6')">Y</button>
+            </div>
+            <div class="col-7 row-3">
+                <button onclick="celdaPulsada('7')">U</button>
+            </div>
+            <div class="col-8 row-3">
+                <button onclick="celdaPulsada('8')">I</button>
+            </div>
+            <div class="col-9 row-3">
+                <button onclick="celdaPulsada('9')">O</button>
+            </div>
+            <div class="col-10 row-3">
+                <button onclick="celdaPulsada('10')">P</button>
+            </div>
+            <div class="col-1 row-4 celda">
+                1
+            </div>
+            <div class="col-2 row-4 celda">
+                2
+            </div>
+            <div class="col-3 row-4 celda">
+                3
+            </div>
+            <div class="col-4 row-4 celda">
+                4
+            </div>
+            <div class="col-5 row-4 celda">
+                5
+            </div>
+            <div class="col-6 row-4 celda">
+                6
+            </div>
+            <div class="col-7 row-4 celda">
+                7
+            </div>
+            <div class="col-8 row-4 celda">
+                8
+            </div>
+            <div class="col-9 row-4 celda">
+                9
+            </div>
+            <div class="col-10 row-4 celda">
+                10
+            </div>
+            <div class="col-1 row-5">
+                <button onclick="celdaPulsada('(1)')">A</button>
+            </div>
+            <div class="col-2 row-5">
+                <button onclick="celdaPulsada('(2)')">S</button>
+            </div>
+            <div class="col-3 row-5">
+                <button onclick="celdaPulsada('(3)')">D</button>
+            </div>
+            <div class="col-4 row-5">
+                <button onclick="celdaPulsada('(4)')">F</button>
+            </div>
+            <div class="col-5 row-5">
+                <button onclick="celdaPulsada('(5)')">G</button>
+            </div>
+            <div class="col-6 row-5">
+                <button onclick="celdaPulsada('(6)')">H</button>
+            </div>
+            <div class="col-7 row-5">
+                <button onclick="celdaPulsada('(7)')">J</button>
+            </div>
+            <div class="col-8 row-5">
+                <button onclick="celdaPulsada('(8)')">K</button>
+            </div>
+            <div class="col-9 row-5">
+                <button onclick="celdaPulsada('(9)')">L</button>
+            </div>
+            <div class="col-10 row-5">
+                <button onclick="celdaPulsada('(10)')">Ñ</button>
+            </div>
+            <div class="col-1 row-6">
+                <button onclick="celdaPulsada('(1)b')"><</button>
+            </div>
+            <div class="col-2 row-6">
+                <button onclick="celdaPulsada('(2)b')">Z</button>
+            </div>
+            <div class="col-3 row-6">
+                <button onclick="celdaPulsada('(3)b')">C</button>
+            </div>
+            <div class="col-4 row-6">
+                <button onclick="celdaPulsada('(4)b')">N</button>
+            </div>
+            <div class="col-6 row-6">
+                <button onclick="celdaPulsada('(6)b')">M</button>
+            </div>
+            <div class="col-7 row-6">
+                <button onclick="celdaPulsada('(7)od')">,</button>
+            </div>
+            <div class="col-9 row-6">
+                <button onclick="celdaPulsada('(9)od')">.</button>
+            </div>
+            <div class="col-10 row-6">
+                <button onclick="celdaPulsada('(10)od')">-</button>
+            </div>
+            <div class="col-2 row-7">
+                <button onclick="celdaPulsada('(2)bb')">X</button>
+            </div>
+            <div class="col-3 row-7">
+                <button onclick="celdaPulsada('(3)bb')">V</button>
+            </div>
+            <div class="col-3 row-8">
+                <button onclick="celdaPulsada('(3)bbb')">B</button>
+            </div>
         </div>
     </main>
     <footer>

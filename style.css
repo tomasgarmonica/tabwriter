@@ -4,6 +4,15 @@
     font-family: 'Roboto', sans-serif;
 }
 
+header h1{
+    display: flex;
+    justify-content: center;
+    margin-top: 40px;
+    color: #645A78;
+    text-decoration: underline;
+    font-size: 50px;
+}
+
 .armonica{
     display: grid;
     grid-template-columns: repeat(10,1fr);
@@ -15,6 +24,27 @@
     padding-top: 5%;
     padding-bottom: 5%;
     box-sizing: border-box;
+}
+
+.armonica-ref{
+    display: grid;
+    grid-template-columns: repeat(10,1fr);
+    grid-gap: 2px;
+    grid-auto-rows: min-content;
+    width: 100%;
+    padding-left: 10%;
+    padding-right: 10%;
+    padding-top: 1%;
+    padding-bottom: 5%;
+    box-sizing: border-box;
+}
+
+.ref-ttl{
+    display: flex;
+    justify-content: center;
+    margin-top: 40px;
+    color: #645A78;
+    text-decoration: underline;
 }
 
 .tab{
