@@ -1,9 +1,11 @@
 let tabEl = document.getElementById("tab-el");
-let aebtn = document.getElementById("ae-btn");
-let uabtn = document.getElementById("ua-btn");
-let aubtn = document.getElementById("au-btn");
-let uaubtn = document.getElementById("uau-btn");
-let aestate = true;
+let aeBtn = document.getElementById("ae-btn");
+let uaBtn = document.getElementById("ua-btn");
+let auBtn = document.getElementById("au-btn");
+let uauBtn = document.getElementById("uau-btn");
+let tBtn = document.getElementById("t-btn")
+let aeState = true;
+let tState = true;
 
 let tab = [];
 
@@ -22,17 +24,31 @@ function saltoDeLinea(){
     tabEl.textContent = tab.join(" ")
 }
 
-function aebtnstate(){
-    if(aestate){
-        uabtn.innerText = "ue"
-        aubtn.innerText = "eu"
-        uaubtn.innerText = "ueu"
-        aestate = false;
+function aeBtnState(){
+    if(aeState){
+        uaBtn.innerText = "ue"
+        auBtn.innerText = "eu"
+        uauBtn.innerText = "ueu"
+        aeState = false;
     } else {
-        uabtn.innerText = "ua"
-        aubtn.innerText = "au"
-        uaubtn.innerText = "uau"
-        aestate = true
+        uaBtn.innerText = "ua"
+        auBtn.innerText = "au"
+        uauBtn.innerText = "uau"
+        aeState = true
+    }
+}
+
+function tBtnState(){
+    if(tState){
+        uaBtn.innerText = "t" + uaBtn.innerText
+        auBtn.innerText = "t" + auBtn.innerText
+        uauBtn.innerText = "t" + uauBtn.innerText
+        tState = false;
+    } else {
+        uaBtn.innerText = uaBtn.innerText.slice(1)
+        auBtn.innerText = auBtn.innerText.slice(1)
+        uauBtn.innerText = uauBtn.innerText.slice(1)
+        tState = true
     }
 }
 
