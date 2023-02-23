@@ -40,16 +40,33 @@ function aeBtnState(){
 }
 
 function tBtnState(){
-    if(tState){
-        uaBtn.innerText = "t" + uaBtn.innerText
-        auBtn.innerText = "t" + auBtn.innerText
-        uauBtn.innerText = "t" + uauBtn.innerText
-        tState = false;
+    // if(tState){
+    //     uaBtn.innerText = "t" + uaBtn.innerText
+    //     auBtn.innerText = "t" + auBtn.innerText
+    //     uauBtn.innerText = "t" + uauBtn.innerText
+    //     tState = false;
+    // } else {
+    //     uaBtn.innerText = uaBtn.innerText.slice(1)
+    //     auBtn.innerText = auBtn.innerText.slice(1)
+    //     uauBtn.innerText = uauBtn.innerText.slice(1)
+    //     tState = true
+    // }
+    if(uaBtn.innerText === "ua"  && auBtn.innerText === "au" && uauBtn.innerText === "uau"){
+        uaBtn.innerText = "tua";
+        auBtn.innerText = "tau";
+        uauBtn.innerText = "tuau";
+    } else if(uaBtn.innerText === "tua"  && auBtn.innerText === "tau" && uauBtn.innerText === "tuau"){
+        uaBtn.innerText = "ua";
+        auBtn.innerText = "au";
+        uauBtn.innerText = "uau";
+    } else if(uaBtn.innerText === "tue"  && auBtn.innerText === "teu" && uauBtn.innerText === "tueu"){
+        uaBtn.innerText = "ue";
+        auBtn.innerText = "eu";
+        uauBtn.innerText = "ueu";
     } else {
-        uaBtn.innerText = uaBtn.innerText.slice(1)
-        auBtn.innerText = auBtn.innerText.slice(1)
-        uauBtn.innerText = uauBtn.innerText.slice(1)
-        tState = true
+        uaBtn.innerText = "tue";
+        auBtn.innerText = "teu";
+        uauBtn.innerText = "tueu";
     }
 }
 
@@ -62,10 +79,8 @@ function copiarAPortaPapeles(){
 
     navigator.clipboard.writeText(textoCopiado.value);
 
-    alert("Tab copiada al portapapeles");
+    alert("Tab copiada al portapapeles!");
 }
-
-
 
 //Modo teclado
 window.addEventListener('keydown', (event) => {
