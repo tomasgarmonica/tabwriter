@@ -5,8 +5,6 @@ let uaBtn = document.getElementById("ua-btn");
 let auBtn = document.getElementById("au-btn");
 let uauBtn = document.getElementById("uau-btn");
 let tBtn = document.getElementById("t-btn");
-let aeState = true;
-let tState = true;
 
 let tab = [];
 
@@ -26,31 +24,26 @@ function saltoDeLinea(){
 }
 
 function aeBtnState(){
-    if(aeState){
+    if(uaBtn.innerText === "ua"  && auBtn.innerText === "au" && uauBtn.innerText === "uau"){
         uaBtn.innerText = "ue"
         auBtn.innerText = "eu"
         uauBtn.innerText = "ueu"
-        aeState = false;
-    } else {
-        uaBtn.innerText = "ua"
-        auBtn.innerText = "au"
-        uauBtn.innerText = "uau"
-        aeState = true
+    } else if(uaBtn.innerText === "tua"  && auBtn.innerText === "tau" && uauBtn.innerText === "tuau"){
+        uaBtn.innerText = "tue"
+        auBtn.innerText = "teu"
+        uauBtn.innerText = "tueu"
+    } else if(uaBtn.innerText === "ue"  && auBtn.innerText === "eu" && uauBtn.innerText === "ueu"){
+        uaBtn.innerText = "ua";
+        auBtn.innerText = "au";
+        uauBtn.innerText = "uau";
+    } else{
+        uaBtn.innerText = "tua";
+        auBtn.innerText = "tau";
+        uauBtn.innerText = "tuau";
     }
 }
 
 function tBtnState(){
-    // if(tState){
-    //     uaBtn.innerText = "t" + uaBtn.innerText
-    //     auBtn.innerText = "t" + auBtn.innerText
-    //     uauBtn.innerText = "t" + uauBtn.innerText
-    //     tState = false;
-    // } else {
-    //     uaBtn.innerText = uaBtn.innerText.slice(1)
-    //     auBtn.innerText = auBtn.innerText.slice(1)
-    //     uauBtn.innerText = uauBtn.innerText.slice(1)
-    //     tState = true
-    // }
     if(uaBtn.innerText === "ua"  && auBtn.innerText === "au" && uauBtn.innerText === "uau"){
         uaBtn.innerText = "tua";
         auBtn.innerText = "tau";
