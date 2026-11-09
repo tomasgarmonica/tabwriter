@@ -9,7 +9,6 @@ let tecladoBtn = document.getElementById("teclado-btn");
 let micBtn = document.getElementById("mic-btn");
 let deteccionEl = document.getElementById("deteccion-el");
 let g4Btn = document.getElementById("g4-btn");
-let avisoEl = document.getElementById("aviso-el");
 
 //Guardado automático en el navegador
 function guardar(){
@@ -104,13 +103,6 @@ function tBtnState(){
 }
 
 
-function mostrarAviso(mensaje){
-    avisoEl.textContent = mensaje;
-    avisoEl.classList.add("visible");
-    clearTimeout(avisoEl.temporizador);
-    avisoEl.temporizador = setTimeout(() => avisoEl.classList.remove("visible"), 2000);
-}
-
 function copiarAPortaPapeles(){
     navigator.clipboard.writeText(tabEl.value);
     mostrarAviso("¡Tab copiada al portapapeles!");
@@ -118,21 +110,103 @@ function copiarAPortaPapeles(){
 
 function descargar(){
     // Si la primera línea es un título, se usa como nombre del archivo
-    const primeraLinea = tabEl.value.split("\n")[0].trim();
-    const nombre = primeraLinea.replace(/[\\/:*?"<>|]/g, "").slice(0, 60) || "tablatura";
-    const archivo = new Blob([tabEl.value], { type: "text/plain;charset=utf-8" });
-    const enlace = document.createElement("a");
-    enlace.href = URL.createObjectURL(archivo);
-    enlace.download = nombre + ".txt";
-    enlace.click();
-    URL.revokeObjectURL(enlace.href);
+    descargarTexto(tabEl.value, tabEl.value.split("\n")[0].trim() || "tablatura");
 }
 
 function limpiar(){
     if(tabEl.value === "" || !confirm("¿Borrar toda la tablatura?")) return;
     tabEl.value = "";
     guardar();
+    dejarDeEditar();
 }
+
+//Publicar en Armonitabs
+const publicarEl = document.getElementById("publicar-el");
+const publicarForm = document.getElementById("publicar-form");
+
+// Tab publicada que se abrió desde su página con "Editar" (se guarda en el navegador)
+function tabEditando(){
+    try {
+        return JSON.parse(localStorage.getItem("armonitabs-editando"));
+    } catch(error){
+        return null;
+    }
+}
+
+function dejarDeEditar(){
+    try { localStorage.removeItem("armonitabs-editando"); } catch(error){}
+    document.getElementById("publicar-editando").hidden = true;
+    document.getElementById("publicar-ttl").textContent = "Publicar tablatura";
+    document.getElementById("publicar-btn").textContent = "Publicar";
+}
+
+async function abrirPublicar(){
+    if(!db){
+        mostrarAviso("La publicación no está disponible en este momento");
+        return;
+    }
+    if(tabEl.value.trim() === ""){
+        mostrarAviso("La tab está vacía");
+        return;
+    }
+    if(!await obtenerUsuario()){
+        if(confirm("Para publicar tenés que entrar con tu cuenta. ¿Ir a entrar? (La tab queda guardada)")){
+            location.href = urlEntrar();
+        }
+        return;
+    }
+
+    const selectTono = document.getElementById("publicar-tono");
+    if(!selectTono.options.length){
+        for(const tonalidad of TONALIDADES) selectTono.add(new Option(tonalidad, tonalidad));
+    }
+    const editando = tabEditando();
+    if(editando){
+        publicarForm.titulo.value = editando.titulo;
+        publicarForm.artista.value = editando.artista || "";
+        publicarForm.tonalidad.value = editando.tonalidad;
+        publicarForm.dificultad.value = editando.dificultad;
+        document.getElementById("publicar-editando").hidden = false;
+        document.getElementById("publicar-ttl").textContent = "Guardar cambios";
+        document.getElementById("publicar-btn").textContent = "Guardar";
+    } else {
+        // La tonalidad elegida para el micrófono es la sugerida
+        publicarForm.tonalidad.value = document.getElementById("tono-el").selectedOptions[0].text;
+    }
+    publicarEl.showModal();
+}
+
+function cerrarPublicar(){
+    publicarEl.close();
+}
+
+publicarForm.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    const boton = document.getElementById("publicar-btn");
+    boton.disabled = true;
+    const datos = {
+        titulo: publicarForm.titulo.value.trim(),
+        artista: publicarForm.artista.value.trim() || null,
+        tonalidad: publicarForm.tonalidad.value,
+        dificultad: parseInt(publicarForm.dificultad.value),
+        contenido: tabEl.value,
+    };
+    const editando = tabEditando();
+    let respuesta;
+    if(editando){
+        datos.actualizada = new Date().toISOString();
+        respuesta = await db.from("tabs").update(datos).eq("id", editando.id).select("id").single();
+    } else {
+        respuesta = await db.from("tabs").insert(datos).select("id").single();
+    }
+    boton.disabled = false;
+    if(respuesta.error){
+        mostrarAviso("No se pudo publicar: " + respuesta.error.message);
+        return;
+    }
+    dejarDeEditar();
+    location.href = "tab.html?id=" + respuesta.data.id;
+});
 
 //Modo teclado
 let modoTeclado = true;
@@ -164,6 +238,8 @@ const teclas = {
 };
 
 window.addEventListener('keydown', (event) => {
+    // Con el formulario de publicar abierto, el teclado escribe normalmente
+    if(publicarEl.open) return;
     if(event.code === "Escape"){
         event.preventDefault();
         toggleModoTeclado();

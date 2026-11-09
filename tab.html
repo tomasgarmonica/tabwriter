@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="icon" href="favicon.ico">
+    <link rel="stylesheet" href="style.css">
+    <title>Armonitabs</title>
+</head>
+<body>
+    <header>
+        <a href="https://www.instagram.com/escueladearmonicaba/" target="_blank" rel="noopener">
+            <img class="logo" src="img/logo-escuela.png" alt="Escuela de Armónica">
+        </a>
+        <h1>Armonitabs</h1>
+    </header>
+    <nav id="nav-el"></nav>
+    <main class="pagina">
+        <p id="estado-el" class="estado">Cargando...</p>
+        <article id="tab-el" hidden>
+            <h2 id="titulo-el"></h2>
+            <p id="artista-el" class="artista"></p>
+            <p class="datos">
+                <span id="datos-el"></span> · por <a id="autor-el"></a>
+            </p>
+            <p id="puntaje-el" class="puntaje"></p>
+            <pre id="contenido-el" class="contenido"></pre>
+
+            <div id="votar-el" class="votar" hidden>
+                <span>Tu puntaje:</span>
+                <span id="estrellas-el" class="estrellas"></span>
+            </div>
+            <p id="votar-entrar-el" hidden><a id="entrar-el">Entrá</a> para votar esta tab.</p>
+
+            <div class="acciones">
+                <button onclick="copiar()">Copiar</button>
+                <button onclick="descargar()">Descargar</button>
+                <button onclick="abrirEnEditor(false)">Abrir en el editor</button>
+            </div>
+            <div id="propias-el" class="acciones" hidden>
+                <button onclick="abrirEnEditor(true)">Editar</button>
+                <button onclick="eliminar()">Eliminar</button>
+            </div>
+        </article>
+    </main>
+    <footer>
+        <p>Una herramienta de la Escuela de Armónica</p>
+        <div class="contacto">
+            <a href="https://www.instagram.com/escueladearmonicaba/" target="_blank" rel="noopener">Instagram: @escueladearmonicaba</a>
+            <a href="https://wa.me/5491130703928" target="_blank" rel="noopener">WhatsApp: +54 9 11 3070-3928</a>
+        </div>
+    </footer>
+    <div id="aviso-el" class="aviso"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="config.js"></script>
+    <script src="comun.js"></script>
+    <script src="tab.js"></script>
+</body>
+</html>

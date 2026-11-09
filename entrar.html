@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="icon" href="favicon.ico">
+    <link rel="stylesheet" href="style.css">
+    <title>Entrar · Armonitabs</title>
+</head>
+<body>
+    <header>
+        <a href="https://www.instagram.com/escueladearmonicaba/" target="_blank" rel="noopener">
+            <img class="logo" src="img/logo-escuela.png" alt="Escuela de Armónica">
+        </a>
+        <h1>Armonitabs</h1>
+    </header>
+    <nav id="nav-el"></nav>
+    <main class="pagina formulario">
+        <h2 id="entrar-ttl">Entrar</h2>
+        <button class="google" onclick="entrarConGoogle()">Entrar con Google</button>
+        <p class="separador">o con tu email</p>
+        <form id="entrar-form">
+            <label id="nombre-lbl" hidden>Nombre de usuario
+                <input name="nombre" minlength="3" maxlength="30" autocomplete="username">
+            </label>
+            <label>Email
+                <input name="email" type="email" required autocomplete="email">
+            </label>
+            <label>Contraseña
+                <input name="clave" type="password" required minlength="6" autocomplete="current-password">
+            </label>
+            <button type="submit" class="principal" id="entrar-btn">Entrar</button>
+        </form>
+        <p id="mensaje-el" class="estado"></p>
+        <p>
+            <span id="cambiar-txt">¿No tenés cuenta?</span>
+            <a href="#" id="cambiar-el">Registrate</a>
+        </p>
+    </main>
+    <footer>
+        <p>Una herramienta de la Escuela de Armónica</p>
+        <div class="contacto">
+            <a href="https://www.instagram.com/escueladearmonicaba/" target="_blank" rel="noopener">Instagram: @escueladearmonicaba</a>
+            <a href="https://wa.me/5491130703928" target="_blank" rel="noopener">WhatsApp: +54 9 11 3070-3928</a>
+        </div>
+    </footer>
+    <div id="aviso-el" class="aviso"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="config.js"></script>
+    <script src="comun.js"></script>
+    <script src="entrar.js"></script>
+</body>
+</html>

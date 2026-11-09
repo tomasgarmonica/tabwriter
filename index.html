@@ -6,15 +6,16 @@
     <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width, height=device-height, target-densitydpi=device-dpi">
     <link rel="icon" href="favicon.ico">
     <link rel="stylesheet" href="style.css">
-    <title>TabWriter</title>
+    <title>Armonitabs</title>
 </head>
 <body>
     <header>
         <a href="https://www.instagram.com/escueladearmonicaba/" target="_blank" rel="noopener">
             <img class="logo" src="img/logo-escuela.png" alt="Escuela de Armónica">
         </a>
-        <h1>TabWriter</h1>
+        <h1>Armonitabs</h1>
     </header>
+    <nav id="nav-el"></nav>
     <main>
         <div id="armo-el" class="armonica">
             <div class="col-10 row-1">
@@ -214,8 +215,39 @@
             <button onclick="copiarAPortaPapeles()">Copiar</button>
             <button onclick="descargar()">Descargar</button>
             <button onclick="limpiar()">Limpiar</button>
+            <button class="principal" onclick="abrirPublicar()">Publicar</button>
         </div>
         <div id="aviso-el" class="aviso"></div>
+
+        <dialog id="publicar-el">
+            <form id="publicar-form" method="dialog">
+                <h2 id="publicar-ttl">Publicar tablatura</h2>
+                <label>Título
+                    <input name="titulo" required maxlength="120">
+                </label>
+                <label>Artista
+                    <input name="artista" maxlength="120">
+                </label>
+                <label>Armónica en
+                    <select name="tonalidad" id="publicar-tono"></select>
+                </label>
+                <label>Dificultad
+                    <select name="dificultad">
+                        <option value="1">Principiante</option>
+                        <option value="2">Intermedio</option>
+                        <option value="3">Avanzado</option>
+                    </select>
+                </label>
+                <p id="publicar-editando" hidden>
+                    Estás editando una tab ya publicada.
+                    <a href="#" onclick="dejarDeEditar(); return false;">Publicarla como nueva</a>
+                </p>
+                <div class="acciones">
+                    <button type="button" onclick="cerrarPublicar()">Cancelar</button>
+                    <button type="submit" class="principal" id="publicar-btn">Publicar</button>
+                </div>
+            </form>
+        </dialog>
 
         <div class="ref-ttl">
             <h2 >Referencia Teclado</h2>
@@ -379,6 +411,9 @@
         </div>
     </footer>
 
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="config.js"></script>
+    <script src="comun.js"></script>
     <script src="index.js"></script>
 </body>
 </html>

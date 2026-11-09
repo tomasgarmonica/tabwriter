@@ -1,3 +1,7 @@
+[hidden]{
+    display: none !important;
+}
+
 *{
     margin: 0;
     padding: 0;
@@ -334,4 +338,216 @@ span.ripple {
     .acciones > button{
         width: 30vw;
     }
+}
+
+
+/* Armonitabs: navegación y páginas de la comunidad */
+body{
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+main{
+    flex: 1;
+}
+
+nav{
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 6px 24px;
+    margin: 16px 2% 0;
+}
+
+nav a{
+    color: #645A78;
+    font-weight: bold;
+    text-decoration: none;
+    padding: 4px 2px;
+    border-bottom: 2px solid transparent;
+}
+
+nav a:hover,
+nav a.actual{
+    border-bottom-color: #645A78;
+}
+
+button.principal{
+    background-color: #645A78;
+    color: white;
+}
+
+button:disabled{
+    opacity: 0.6;
+    cursor: default;
+}
+
+.pagina{
+    width: 100%;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 30px 16px;
+    box-sizing: border-box;
+}
+
+.pagina h2{
+    color: #645A78;
+    margin-bottom: 6px;
+}
+
+.pagina a{
+    color: #645A78;
+}
+
+.estado{
+    margin: 16px 0;
+    color: #555;
+}
+
+.filtros{
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.filtros input,
+.filtros select,
+dialog input,
+dialog select,
+.formulario input{
+    height: 40px;
+    padding: 0 10px;
+    border: 2px solid #645A78;
+    border-radius: 0.25rem;
+    background-color: white;
+    box-sizing: border-box;
+    font-size: 15px;
+}
+
+.filtros input{
+    flex: 1 1 250px;
+}
+
+.filtros button{
+    width: 120px;
+}
+
+.lista{
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.tarjeta{
+    display: block;
+    padding: 14px 16px;
+    border: 2px solid #645A78;
+    border-radius: 0.25rem;
+    color: inherit;
+    text-decoration: none;
+}
+
+.pagina a.tarjeta{
+    color: inherit;
+}
+
+.tarjeta:hover{
+    background-color: #f3f1f6;
+}
+
+.tarjeta h3{
+    color: #645A78;
+}
+
+.artista{
+    font-style: italic;
+}
+
+.datos{
+    margin-top: 4px;
+    font-size: 14px;
+    color: #555;
+}
+
+.puntaje{
+    margin-top: 4px;
+    color: #645A78;
+}
+
+.contenido{
+    margin: 20px 0;
+    padding: 16px;
+    border: 2px solid #645A78;
+    border-radius: 0.25rem;
+    white-space: pre-wrap;
+    font-family: monospace;
+    font-size: 16px;
+    line-height: 1.6;
+}
+
+.votar{
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.estrellas button{
+    width: auto;
+    height: auto;
+    padding: 0 2px;
+    border: 0;
+    font-size: 28px;
+    color: #645A78;
+    background: none;
+}
+
+dialog{
+    width: min(420px, 90vw);
+    padding: 24px;
+    border: 2px solid #645A78;
+    border-radius: 0.5rem;
+}
+
+dialog::backdrop{
+    background-color: rgba(0, 0, 0, 0.4);
+}
+
+dialog h2{
+    color: #645A78;
+    margin-bottom: 12px;
+}
+
+dialog label,
+.formulario label{
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    margin-bottom: 12px;
+    font-weight: bold;
+    color: #645A78;
+}
+
+dialog p{
+    margin-bottom: 12px;
+    font-size: 14px;
+}
+
+dialog .acciones > button{
+    width: auto;
+    flex: 1;
+}
+
+.formulario{
+    max-width: 380px;
+}
+
+.formulario .google{
+    margin-top: 10px;
+}
+
+.separador{
+    margin: 16px 0;
+    text-align: center;
+    color: #555;
 }

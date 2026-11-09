@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="icon" href="favicon.ico">
+    <link rel="stylesheet" href="style.css">
+    <title>Tablaturas · Armonitabs</title>
+</head>
+<body>
+    <header>
+        <a href="https://www.instagram.com/escueladearmonicaba/" target="_blank" rel="noopener">
+            <img class="logo" src="img/logo-escuela.png" alt="Escuela de Armónica">
+        </a>
+        <h1>Armonitabs</h1>
+    </header>
+    <nav id="nav-el"></nav>
+    <main class="pagina">
+        <form id="buscar-form" class="filtros">
+            <input type="search" name="texto" placeholder="Buscar por título o artista">
+            <select name="tonalidad">
+                <option value="">Todas las tonalidades</option>
+            </select>
+            <select name="orden">
+                <option value="puntaje">Mejor puntuadas</option>
+                <option value="nuevas">Más nuevas</option>
+            </select>
+            <button type="submit">Buscar</button>
+        </form>
+        <p id="estado-el" class="estado"></p>
+        <div id="lista-el" class="lista"></div>
+    </main>
+    <footer>
+        <p>Una herramienta de la Escuela de Armónica</p>
+        <div class="contacto">
+            <a href="https://www.instagram.com/escueladearmonicaba/" target="_blank" rel="noopener">Instagram: @escueladearmonicaba</a>
+            <a href="https://wa.me/5491130703928" target="_blank" rel="noopener">WhatsApp: +54 9 11 3070-3928</a>
+        </div>
+    </footer>
+    <div id="aviso-el" class="aviso"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="config.js"></script>
+    <script src="comun.js"></script>
+    <script src="tabs.js"></script>
+</body>
+</html>
