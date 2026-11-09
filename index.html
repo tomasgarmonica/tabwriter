@@ -174,8 +174,28 @@
             <button onclick="borrar()">Borrar</button>
         </div>
 
+        <div class="controles">
+            <button id="teclado-btn" onclick="toggleModoTeclado()">Teclado: on (Esc)</button>
+            <button id="mic-btn" onclick="toggleMicrofono()">Micrófono: off</button>
+            <select id="tono-el" onchange="cambiarTono(value)">
+                <option value="-5">G</option>
+                <option value="-4">Ab</option>
+                <option value="-3">A</option>
+                <option value="-2">Bb</option>
+                <option value="-1">B</option>
+                <option value="0" selected>C</option>
+                <option value="1">Db</option>
+                <option value="2">D</option>
+                <option value="3">Eb</option>
+                <option value="4">E</option>
+                <option value="5">F</option>
+                <option value="6">F#</option>
+            </select>
+            <span id="deteccion-el">-</span>
+        </div>
+
         <div class="tab">
-            <textarea id="tab-el"></textarea>
+            <textarea id="tab-el" readonly></textarea>
         </div>
         <div class="tooltip">
         <button class="copyBtn" onclick="copiarAPortaPapeles()" >

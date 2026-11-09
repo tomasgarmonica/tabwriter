@@ -69,6 +69,42 @@ header h1{
     margin: 5px;
 }
 
+.controles{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin: 10px 10% 0;
+}
+
+.controles > button{
+    width: 160px;
+}
+
+#tono-el{
+    height: 40px;
+    padding: 0 10px;
+    border: 2px solid #645A78;
+    border-radius: 0.25rem;
+    background-color: white;
+}
+
+#deteccion-el{
+    min-width: 120px;
+    font-weight: bold;
+    color: #645A78;
+}
+
+button.activo{
+    background-color: #645A78;
+    color: white;
+}
+
+.armonica button.detectada{
+    background-color: #645A78;
+    color: white;
+}
+
 button{
     position: relative;
     overflow: hidden;
