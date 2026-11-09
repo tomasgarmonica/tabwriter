@@ -553,11 +553,11 @@ dialog .acciones > button{
 }
 
 /* Página de una tab: todo centrado, pero las líneas de la tablatura alineadas entre sí */
-#tab-el{
+#tab-vista{
     text-align: center;
 }
 
-#tab-el .contenido{
+#tab-vista .contenido{
     width: fit-content;
     min-width: 50%;
     max-width: 100%;
@@ -566,6 +566,6 @@ dialog .acciones > button{
     text-align: left;
 }
 
-#tab-el .votar{
+#tab-vista .votar{
     justify-content: center;
 }

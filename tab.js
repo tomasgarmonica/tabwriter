@@ -23,7 +23,7 @@ async function cargarTab(){
     document.getElementById("contenido-el").textContent = tab.contenido;
     mostrarPuntaje();
     estadoEl.hidden = true;
-    document.getElementById("tab-el").hidden = false;
+    document.getElementById("tab-vista").hidden = false;
 
     const usuario = await obtenerUsuario();
     if(!usuario){
