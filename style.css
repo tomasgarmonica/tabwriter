@@ -551,3 +551,21 @@ dialog .acciones > button{
     text-align: center;
     color: #555;
 }
+
+/* Página de una tab: todo centrado, pero las líneas de la tablatura alineadas entre sí */
+#tab-el{
+    text-align: center;
+}
+
+#tab-el .contenido{
+    width: fit-content;
+    min-width: 50%;
+    max-width: 100%;
+    margin: 20px auto;
+    box-sizing: border-box;
+    text-align: left;
+}
+
+#tab-el .votar{
+    justify-content: center;
+}
