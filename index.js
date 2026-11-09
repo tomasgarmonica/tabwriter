@@ -8,12 +8,42 @@ let tBtn = document.getElementById("t-btn");
 let tecladoBtn = document.getElementById("teclado-btn");
 let micBtn = document.getElementById("mic-btn");
 let deteccionEl = document.getElementById("deteccion-el");
+let g4Btn = document.getElementById("g4-btn");
+let avisoEl = document.getElementById("aviso-el");
+
+//Guardado automático en el navegador
+function guardar(){
+    try {
+        localStorage.setItem("tabwriter-tab", tabEl.value);
+        localStorage.setItem("tabwriter-ajustes", JSON.stringify({
+            tono, sensibilidad, estabilidad: framesEstables, g4: celdasPorSemitono[7]
+        }));
+    } catch(error){}
+}
+
+function cargar(){
+    try {
+        tabEl.value = localStorage.getItem("tabwriter-tab") || "";
+        const ajustes = JSON.parse(localStorage.getItem("tabwriter-ajustes"));
+        if(!ajustes) return;
+        cambiarTono(ajustes.tono);
+        document.getElementById("tono-el").value = ajustes.tono;
+        cambiarSensibilidad(ajustes.sensibilidad);
+        document.getElementById("sensibilidad-el").value = ajustes.sensibilidad;
+        cambiarEstabilidad(ajustes.estabilidad);
+        document.getElementById("estabilidad-el").value = ajustes.estabilidad;
+        if(ajustes.g4 !== celdasPorSemitono[7]) toggleG4();
+    } catch(error){}
+}
+
+tabEl.addEventListener("input", guardar);
 
 // El textarea es la fuente de verdad: así se conserva lo que se escribe a mano
 function celdaPulsada(celda){
     const texto = tabEl.value;
     tabEl.value = (texto === "" || texto.endsWith("\n")) ? texto + celda : texto + " " + celda;
     tabEl.scrollTop = tabEl.scrollHeight;
+    guardar();
 }
 
 function borrar(){
@@ -24,11 +54,13 @@ function borrar(){
         texto = texto.replace(/[ \t]*\S+$/, "");
     }
     tabEl.value = texto;
+    guardar();
 }
 
 function saltoDeLinea(){
     tabEl.value += "\n";
     tabEl.scrollTop = tabEl.scrollHeight;
+    guardar();
 }
 
 function aeBtnState(){
@@ -72,15 +104,34 @@ function tBtnState(){
 }
 
 
+function mostrarAviso(mensaje){
+    avisoEl.textContent = mensaje;
+    avisoEl.classList.add("visible");
+    clearTimeout(avisoEl.temporizador);
+    avisoEl.temporizador = setTimeout(() => avisoEl.classList.remove("visible"), 2000);
+}
+
 function copiarAPortaPapeles(){
-    let textoCopiado = document.getElementById("tab-el");
+    navigator.clipboard.writeText(tabEl.value);
+    mostrarAviso("¡Tab copiada al portapapeles!");
+}
 
-    textoCopiado.select();
-    textoCopiado.setSelectionRange(0, 99999);
+function descargar(){
+    // Si la primera línea es un título, se usa como nombre del archivo
+    const primeraLinea = tabEl.value.split("\n")[0].trim();
+    const nombre = primeraLinea.replace(/[\\/:*?"<>|]/g, "").slice(0, 60) || "tablatura";
+    const archivo = new Blob([tabEl.value], { type: "text/plain;charset=utf-8" });
+    const enlace = document.createElement("a");
+    enlace.href = URL.createObjectURL(archivo);
+    enlace.download = nombre + ".txt";
+    enlace.click();
+    URL.revokeObjectURL(enlace.href);
+}
 
-    navigator.clipboard.writeText(textoCopiado.value);
-
-    alert("Tab copiada al portapapeles!");
+function limpiar(){
+    if(tabEl.value === "" || !confirm("¿Borrar toda la tablatura?")) return;
+    tabEl.value = "";
+    guardar();
 }
 
 //Modo teclado
@@ -133,7 +184,7 @@ window.addEventListener('keydown', (event) => {
 
 //Detector de notas por micrófono
 // Celdas de una armónica diatónica Richter, una por semitono desde el 1 soplado (C4 en una armónica en C).
-// G4 sale tanto en 3 soplado como en (2) aspirado: se escribe (2).
+// G4 sale tanto en 3 soplado como en (2) aspirado: se elige con el botón G4 (índice 7).
 const celdasPorSemitono = [
     "1", "(1)b", "(1)", "1ob", "2", "(2)bb", "(2)b", "(2)", "(3)bbb", "(3)bb",
     "(3)b", "(3)", "4", "(4)b", "(4)", "4ob", "5", "(5)", "5ob", "6",
@@ -142,12 +193,15 @@ const celdasPorSemitono = [
 ];
 const nombresNotas = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"];
 
-const VOLUMEN_MINIMO = 0.01;  // RMS por debajo del cual se considera silencio
-const FRAMES_ESTABLES = 6;    // ~100ms con la misma nota antes de escribirla
+// RMS por debajo del cual se considera silencio, según el control de sensibilidad (1 a 10)
+const VOLUMENES_MINIMOS = [0.08, 0.05, 0.035, 0.02, 0.01, 0.007, 0.005, 0.003, 0.002, 0.001];
 const FRAMES_SILENCIO = 4;    // silencio necesario para volver a escribir la misma nota
 const TOLERANCIA_CENTS = 45;
 
 let tono = 0;
+let sensibilidad = 5;
+let volumenMinimo = VOLUMENES_MINIMOS[sensibilidad - 1];
+let framesEstables = 6;       // frames (~16ms c/u) con la misma nota antes de escribirla
 let audioCtx = null;
 let analizador = null;
 let streamMic = null;
@@ -160,6 +214,24 @@ let botonDetectado = null;
 
 function cambiarTono(valor){
     tono = parseInt(valor);
+    guardar();
+}
+
+function cambiarSensibilidad(valor){
+    sensibilidad = parseInt(valor);
+    volumenMinimo = VOLUMENES_MINIMOS[sensibilidad - 1];
+    guardar();
+}
+
+function cambiarEstabilidad(valor){
+    framesEstables = parseInt(valor);
+    guardar();
+}
+
+function toggleG4(){
+    celdasPorSemitono[7] = celdasPorSemitono[7] === "(2)" ? "3" : "(2)";
+    g4Btn.innerText = "G4 como: " + celdasPorSemitono[7];
+    guardar();
 }
 
 async function toggleMicrofono(){
@@ -219,7 +291,7 @@ function analizarAudio(){
             candidata = celda.nombre;
             framesCandidata = 1;
         }
-        if(framesCandidata >= FRAMES_ESTABLES){
+        if(framesCandidata >= framesEstables){
             deteccionEl.textContent = celda.nombre + "  (" + celda.nota + ")";
             marcarCelda(celda.nombre);
             if(celda.nombre !== ultimaEscrita){
@@ -245,7 +317,7 @@ function frecuenciaACelda(frecuencia){
 function detectarFrecuencia(buffer, sampleRate){
     let rms = 0;
     for(let i = 0; i < buffer.length; i++) rms += buffer[i] * buffer[i];
-    if(Math.sqrt(rms / buffer.length) < VOLUMEN_MINIMO) return null;
+    if(Math.sqrt(rms / buffer.length) < volumenMinimo) return null;
 
     const tauMin = Math.floor(sampleRate / 4000);
     const tauMax = Math.floor(sampleRate / 150);
@@ -320,3 +392,5 @@ const buttons = document.getElementsByTagName("button");
 for (const button of buttons) {
     button.addEventListener("click", createRipple);
 }
+
+cargar();
