@@ -17,8 +17,24 @@
     <nav id="nav-el"></nav>
     <main class="pagina">
         <h2 id="nombre-el"></h2>
+        <a href="#" id="cambiar-nombre-el" hidden>Cambiar nombre de usuario</a>
         <p id="estado-el" class="estado">Cargando...</p>
         <div id="lista-el" class="lista"></div>
+
+        <dialog id="nombre-dialogo">
+            <form id="nombre-form" method="dialog">
+                <h2 id="nombre-ttl">Nombre de usuario</h2>
+                <p id="nombre-ayuda">Es el nombre que se ve junto a las tabs que publicás.</p>
+                <label>Nuevo nombre
+                    <input name="nombre" required minlength="3" maxlength="30" autocomplete="username">
+                </label>
+                <p id="nombre-mensaje" class="estado"></p>
+                <div class="acciones">
+                    <button type="button" onclick="cerrarCambioDeNombre()" id="nombre-cancelar">Cancelar</button>
+                    <button type="submit" class="principal" id="nombre-btn">Guardar</button>
+                </div>
+            </form>
+        </dialog>
     </main>
     <footer>
         <p>Una herramienta de la Escuela de Armónica de Buenos Aires</p>

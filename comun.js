@@ -125,9 +125,14 @@ function obtenerUsuario(){
             if(!db) return null;
             const { data } = await db.auth.getSession();
             if(!data.session) return null;
-            const id = data.session.user.id;
+            const { id, app_metadata, user_metadata } = data.session.user;
             const { data: perfil } = await db.from("perfiles").select("nombre").eq("id", id).single();
-            return { id, nombre: perfil ? perfil.nombre : "" };
+            return {
+                id,
+                nombre: perfil ? perfil.nombre : "",
+                // Quien se registró con Google recibe el nombre de su cuenta: se le ofrece elegir otro una vez
+                debeElegirNombre: app_metadata.provider === "google" && !user_metadata.nombre_elegido,
+            };
         })();
     }
     return usuarioPromesa;
@@ -156,6 +161,11 @@ async function dibujarNav(){
     if(!db) return;
 
     const usuario = await obtenerUsuario();
+    if(usuario && usuario.debeElegirNombre && pagina !== "perfil.html"){
+        const actual = pagina + location.search;
+        location.href = "perfil.html?bienvenida=1&volver=" + encodeURIComponent(actual);
+        return;
+    }
     if(usuario){
         const perfil = crearEnlace(usuario.nombre, "perfil.html?id=" + usuario.id);
         if(pagina === "perfil.html" && new URLSearchParams(location.search).get("id") === usuario.id){
