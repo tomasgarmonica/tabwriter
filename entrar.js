@@ -88,3 +88,18 @@ async function registrar(){
 
 // Si ya tiene sesión, no tiene sentido estar acá
 obtenerUsuario().then(usuario => { if(usuario) location.href = urlVolver; });
+
+// El botón de Google aparece solo si está activado en Supabase (Authentication > Providers)
+async function mostrarGoogleSiEstaActivo(){
+    if(!db) return;
+    try {
+        const respuesta = await fetch(SUPABASE_URL + "/auth/v1/settings", { headers: { apikey: SUPABASE_ANON_KEY } });
+        const ajustes = await respuesta.json();
+        if(ajustes.external && ajustes.external.google){
+            document.getElementById("google-btn").hidden = false;
+            document.getElementById("separador-el").hidden = false;
+        }
+    } catch(error){}
+}
+
+mostrarGoogleSiEstaActivo();

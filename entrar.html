@@ -17,8 +17,8 @@
     <nav id="nav-el"></nav>
     <main class="pagina formulario">
         <h2 id="entrar-ttl">Entrar</h2>
-        <button class="google" onclick="entrarConGoogle()">Entrar con Google</button>
-        <p class="separador">o con tu email</p>
+        <button class="google" id="google-btn" onclick="entrarConGoogle()" hidden>Entrar con Google</button>
+        <p class="separador" id="separador-el" hidden>o con tu email</p>
         <form id="entrar-form">
             <label id="nombre-lbl" hidden>Nombre de usuario
                 <input name="nombre" minlength="3" maxlength="30" autocomplete="username">
