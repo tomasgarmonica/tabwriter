@@ -220,12 +220,16 @@ async function abrirPublicar(){
         mostrarAviso("La tab está vacía");
         return;
     }
-    if(!await obtenerUsuario()){
+    const usuario = await obtenerUsuario();
+    if(!usuario){
         if(confirm("Para publicar tenés que entrar con tu cuenta. ¿Ir a entrar? (La tab queda guardada)")){
             location.href = urlEntrar();
         }
         return;
     }
+    // Una edición que quedó de otra cuenta en este navegador no se puede guardar: se publica como nueva
+    const editandoAntes = tabEditando();
+    if(editandoAntes && editandoAntes.autor && editandoAntes.autor !== usuario.id) dejarDeEditar();
 
     const tonos = document.getElementById("publicar-tonos");
     if(!tonos.children.length){
@@ -374,13 +378,18 @@ window.addEventListener('keydown', (event) => {
     }
     // Texto libre o atajos (Ctrl+C, Ctrl+R...): dejar que el navegador los maneje
     if(!modoTeclado || event.ctrlKey || event.metaKey || event.altKey) return;
+    // En los controles (selector de armónica, deslizadores) el teclado funciona como siempre
+    if(event.target.matches("select, input")) return;
 
-    event.preventDefault();
+    // Solo se toman las teclas de la armónica; Tab, Espacio y las flechas siguen sirviendo para moverse
     if(event.code === "Enter"){
+        event.preventDefault();
         saltoDeLinea();
     } else if(event.code === "Backspace"){
+        event.preventDefault();
         borrar();
     } else if(teclas[event.code]){
+        event.preventDefault();
         celdaPulsada(teclas[event.code]);
     }
 });

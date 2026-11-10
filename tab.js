@@ -5,11 +5,20 @@ let tab = null;
 let contenidoMostrado = "";   // la tab tal como se ve (puede estar transpuesta)
 
 async function cargarTab(){
+    const paginaFija = Boolean(document.body.dataset.tabId);
     if(!db){
         estadoEl.textContent = "Las tablaturas no están disponibles en este momento.";
         return;
     }
-    const { data, error } = await db.from("tabs_resumen").select("*").eq("id", tabId).maybeSingle();
+    const { data, error } = tabId
+        ? await db.from("tabs_resumen").select("*").eq("id", tabId).maybeSingle()
+        : { data: null, error: null };
+    if(error && paginaFija){
+        // La página fija ya trae la tab escrita: se sigue viendo, solo sin votos ni versiones
+        estadoEl.textContent = "No se pudo conectar con Armonitabs: por ahora no se puede votar ni ver otras versiones.";
+        estadoEl.hidden = false;
+        return;
+    }
     if(error || !data){
         estadoEl.textContent = error ? "No se pudo cargar la tab: " + error.message : "Esta tab no existe o fue eliminada.";
         estadoEl.hidden = false;
@@ -233,7 +242,7 @@ function abrirEnEditor(editar){
         localStorage.setItem("tabwriter-tab", contenido);
         if(editar){
             localStorage.setItem("armonitabs-editando", JSON.stringify({
-                id: tab.id, titulo: tab.titulo, artista: tab.artista, tonalidades: tab.tonalidades, dificultad: tab.dificultad
+                id: tab.id, autor: tab.autor, titulo: tab.titulo, artista: tab.artista, tonalidades: tab.tonalidades, dificultad: tab.dificultad
             }));
         } else {
             localStorage.removeItem("armonitabs-editando");

@@ -133,6 +133,16 @@ button{
     touch-action: manipulation;
 }
 
+/* Marca del elemento seleccionado al moverse con el teclado (no aparece al tocar o hacer clic) */
+:focus-visible{
+    outline: 3px solid #645A78;
+    outline-offset: 2px;
+}
+
+button:focus-visible{
+    outline: 3px solid #645A78;
+}
+
 .acciones{
     display: flex;
     justify-content: center;
