@@ -78,18 +78,58 @@ async function votar(puntaje){
 }
 
 //Transponer
+// Por cada armónica de la tab: { select, octava } con la armónica elegida y las octavas extra
+const transposicion = {};
+
 function dibujarTransponer(){
     const filas = document.getElementById("transponer-el");
     for(const tonalidad of tab.tonalidades){
-        const fila = document.createElement("label");
-        fila.append("Armónica en " + tonalidad + " → ");
+        const fila = document.createElement("div");
+        fila.className = "fila";
+
+        const etiqueta = document.createElement("label");
+        etiqueta.append("Armónica en " + tonalidad + " → ");
         const select = document.createElement("select");
-        select.dataset.original = tonalidad;
         for(const opcion of TONALIDADES) select.add(new Option(opcion, opcion));
         select.value = tonalidad;
-        select.addEventListener("change", aplicarTransposicion);
-        fila.append(select);
+        select.addEventListener("change", () => {
+            // Al cambiar de armónica se vuelve a la octava que elige la app
+            transposicion[tonalidad].octava = 0;
+            aplicarTransposicion();
+        });
+        etiqueta.append(select);
+
+        const control = document.createElement("span");
+        control.className = "octava";
+        const bajar = document.createElement("button");
+        bajar.textContent = "−";
+        bajar.title = "Bajar una octava";
+        const valor = document.createElement("span");
+        const subir = document.createElement("button");
+        subir.textContent = "+";
+        subir.title = "Subir una octava";
+        bajar.addEventListener("click", () => moverOctava(tonalidad, -1));
+        subir.addEventListener("click", () => moverOctava(tonalidad, 1));
+        control.append("Octava ", bajar, valor, subir);
+
+        transposicion[tonalidad] = { select, octava: 0, valor, bajar, subir };
+        fila.append(etiqueta, control);
         filas.append(fila);
+    }
+    dibujarOctavas();
+}
+
+function moverOctava(tonalidad, cambio){
+    transposicion[tonalidad].octava += cambio;
+    aplicarTransposicion();
+}
+
+// La armónica tiene 3 octavas: más de 2 hacia cualquier lado deja todo fuera de registro
+function dibujarOctavas(){
+    for(const { octava, valor, bajar, subir } of Object.values(transposicion)){
+        valor.textContent = octava > 0 ? "+" + octava : octava < 0 ? "−" + -octava : "0";
+        bajar.disabled = octava <= -2;
+        subir.disabled = octava >= 2;
     }
 }
 
@@ -104,10 +144,13 @@ function celdaG4(){
 
 function aplicarTransposicion(){
     const reemplazos = {};
-    for(const select of document.querySelectorAll("#transponer-el select")){
-        reemplazos[select.dataset.original] = select.value;
+    const octavas = {};
+    for(const [tonalidad, { select, octava }] of Object.entries(transposicion)){
+        reemplazos[tonalidad] = select.value;
+        octavas[tonalidad] = octava;
     }
-    contenidoMostrado = transponer(tab.contenido, tab.tonalidades, reemplazos, celdaG4());
+    dibujarOctavas();
+    contenidoMostrado = transponer(tab.contenido, tab.tonalidades, reemplazos, celdaG4(), octavas);
     document.getElementById("contenido-el").textContent = contenidoMostrado;
     document.getElementById("fuera-de-registro-el").hidden = !/(^|\s)\?(\s|$)/.test(contenidoMostrado);
 }

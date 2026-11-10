@@ -59,7 +59,8 @@ function esLineaDeTab(linea){
 // Reescribe la tab para tocar las mismas notas con otras armónicas.
 // reemplazos: { tonalidadOriginal: tonalidadNueva }. Antes de la primera marca rige tonalidades[0].
 // Cada sección se corre una octava si así entran más notas; las que no entran quedan como "?".
-function transponer(contenido, tonalidades, reemplazos, celdaG4 = "(2)"){
+// octavas: { tonalidadOriginal: n } sube o baja n octavas más, a elección del usuario.
+function transponer(contenido, tonalidades, reemplazos, celdaG4 = "(2)", octavas = {}){
     const lineas = contenido.split("\n");
     const secciones = [];
     let actual = { tonalidad: tonalidades[0], lineas: [] };
@@ -76,7 +77,9 @@ function transponer(contenido, tonalidades, reemplazos, celdaG4 = "(2)"){
 
     return secciones.flatMap(seccion => {
         const destino = reemplazos[seccion.tonalidad] || seccion.tonalidad;
-        if(destino === seccion.tonalidad) return seccion.lineas;
+        const octavaElegida = (octavas[seccion.tonalidad] || 0) * 12;
+        const mismaArmonica = destino === seccion.tonalidad;
+        if(mismaArmonica && !octavaElegida) return seccion.lineas;
 
         const indices = [];
         for(const linea of seccion.lineas){
@@ -90,7 +93,7 @@ function transponer(contenido, tonalidades, reemplazos, celdaG4 = "(2)"){
         let mejorOctava = 0;
         let mejorCantidad = -1;
         let mejorDificultad = Infinity;
-        for(const octava of [0, 12, -12]){
+        for(const octava of (mismaArmonica ? [0] : [0, 12, -12])){
             const nuevos = indices.map(i => i + corrimiento + octava).filter(i => i >= 0 && i < CELDAS.length);
             const dificultad = nuevos.filter(i => /b|o/.test(CELDAS[i])).length;
             if(nuevos.length > mejorCantidad || (nuevos.length === mejorCantidad && dificultad < mejorDificultad)){
@@ -101,11 +104,11 @@ function transponer(contenido, tonalidades, reemplazos, celdaG4 = "(2)"){
         }
 
         return seccion.lineas.map((linea, numero) => {
-            if(seccion.marca && numero === 0) return marcaArmonica(destino);
+            if(seccion.marca && numero === 0) return mismaArmonica ? linea : marcaArmonica(destino);
             if(!esLineaDeTab(linea)) return linea;
             return linea.replace(/\S+/g, palabra => {
                 if(!INDICE_CELDA.has(palabra)) return palabra;
-                const nuevo = INDICE_CELDA.get(palabra) + corrimiento + mejorOctava;
+                const nuevo = INDICE_CELDA.get(palabra) + corrimiento + mejorOctava + octavaElegida;
                 if(nuevo < 0 || nuevo >= CELDAS.length) return "?";
                 return nuevo === 7 ? celdaG4 : CELDAS[nuevo];
             });

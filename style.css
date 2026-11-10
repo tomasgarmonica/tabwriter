@@ -640,3 +640,31 @@ dialog .tonos label{
     border-radius: 0.25rem;
     background-color: white;
 }
+
+.transponer-filas .fila{
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 6px 16px;
+}
+
+.octava{
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-weight: bold;
+    color: #645A78;
+}
+
+.octava button{
+    width: 34px;
+    height: 34px;
+    font-size: 18px;
+    line-height: 1;
+}
+
+.octava span{
+    min-width: 24px;
+    text-align: center;
+}
