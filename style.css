@@ -400,6 +400,25 @@ button:disabled{
     color: #645A78;
 }
 
+/* Páginas de texto corrido (privacidad) */
+.texto{
+    line-height: 1.5;
+}
+
+.texto h3{
+    color: #645A78;
+    margin: 24px 0 6px;
+}
+
+.texto p,
+.texto ul{
+    margin: 0 0 10px;
+}
+
+.texto ul{
+    padding-left: 22px;
+}
+
 .estado{
     margin: 16px 0;
     color: #555;
