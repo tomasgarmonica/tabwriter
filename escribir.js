@@ -140,6 +140,77 @@ function dejarDeEditar(){
     document.getElementById("publicar-btn").textContent = "Publicar";
 }
 
+// Versiones: al publicar se ofrecen los artistas y temas que ya están, para que se escriban igual
+let temasPublicados = new Map();
+let parecidoRevisado = false;   // ya contestó "¿Es este tema?"
+const parecidoEl = document.getElementById("publicar-parecido");
+
+// Temas que no son solamente la tab que se está editando
+function otrosTemas(){
+    const editando = tabEditando();
+    return [...temasPublicados.values()].filter(tema => !editando || tema.ids.some(id => id !== editando.id));
+}
+
+function llenarLista(lista, textos){
+    const vistos = new Set();
+    const opciones = [];
+    for(const texto of textos){
+        const clave = normalizarTexto(texto);
+        if(!clave || vistos.has(clave)) continue;
+        vistos.add(clave);
+        opciones.push(new Option(texto));
+    }
+    opciones.sort((a, b) => a.value.localeCompare(b.value, "es"));
+    document.getElementById(lista).replaceChildren(...opciones);
+}
+
+// Los títulos sugeridos son los del artista elegido (o todos si no coincide con ninguno)
+function actualizarSugerencias(){
+    const temas = otrosTemas();
+    llenarLista("artistas-lista", temas.map(tema => tema.artista));
+    const artista = normalizarTexto(publicarForm.artista.value);
+    const delArtista = temas.filter(tema => normalizarTexto(tema.artista) === artista);
+    llenarLista("titulos-lista", (delArtista.length ? delArtista : temas).map(tema => tema.titulo));
+
+    const editando = tabEditando();
+    const tema = temasPublicados.get(claveTema(publicarForm.titulo.value, publicarForm.artista.value));
+    const cantidad = tema ? tema.ids.filter(id => !editando || id !== editando.id).length : 0;
+    const aviso = document.getElementById("publicar-versiones");
+    aviso.hidden = !cantidad || !publicarForm.titulo.value.trim();
+    aviso.textContent = (cantidad === 1 ? "Ya hay 1 versión" : "Ya hay " + cantidad + " versiones") +
+        " de este tema. Si la tuya es distinta (otra armónica, otra parte), ¡publicala igual!";
+}
+
+// El tema ya publicado más parecido a lo escrito, si no hay uno exactamente igual
+function temaParecido(){
+    const titulo = normalizarTexto(publicarForm.titulo.value);
+    const artista = normalizarTexto(publicarForm.artista.value);
+    let mejor = null;
+    let menorDistancia = Infinity;
+    for(const tema of otrosTemas()){
+        const temaTitulo = normalizarTexto(tema.titulo);
+        const temaArtista = normalizarTexto(tema.artista);
+        if(temaTitulo === titulo && temaArtista === artista) return null;
+        // Sin artista escrito se compara solo el título
+        if(!textosParecidos(titulo, temaTitulo)) continue;
+        if(artista && !textosParecidos(artista, temaArtista)) continue;
+        const distancia = distanciaTextos(titulo, temaTitulo) + (artista ? distanciaTextos(artista, temaArtista) : 0);
+        if(distancia < menorDistancia){
+            mejor = tema;
+            menorDistancia = distancia;
+        }
+    }
+    return mejor;
+}
+
+for(const campo of [publicarForm.artista, publicarForm.titulo]){
+    campo.addEventListener("input", () => {
+        parecidoRevisado = false;
+        parecidoEl.hidden = true;
+        actualizarSugerencias();
+    });
+}
+
 async function abrirPublicar(){
     if(!db){
         mostrarAviso("La publicación no está disponible en este momento");
@@ -183,6 +254,10 @@ async function abrirPublicar(){
         document.getElementById("publicar-ttl").textContent = "Guardar cambios";
         document.getElementById("publicar-btn").textContent = "Guardar";
     }
+    temasPublicados = await cargarTemas();
+    parecidoRevisado = false;
+    parecidoEl.hidden = true;
+    actualizarSugerencias();
     publicarEl.showModal();
 }
 
@@ -209,6 +284,26 @@ publicarForm.addEventListener("submit", async (event) => {
     ].filter((tonalidad, i, lista) => lista.indexOf(tonalidad) === i);
     if(tonalidades.length < 1 || tonalidades.length > 4){
         mostrarAviso("Marcá entre 1 y 4 armónicas");
+        return;
+    }
+    // Si se parece a un tema ya publicado, se pregunta antes de crear uno nuevo
+    const parecido = parecidoRevisado ? null : temaParecido();
+    if(parecido){
+        const cantidad = parecido.ids.length;
+        document.getElementById("publicar-parecido-txt").textContent = "¿Es «" + parecido.titulo + "»" +
+            (parecido.artista ? " de " + parecido.artista : "") + "? Ya hay " +
+            (cantidad === 1 ? "1 versión" : cantidad + " versiones") + " de ese tema.";
+        document.getElementById("parecido-si").onclick = () => {
+            publicarForm.titulo.value = parecido.titulo;
+            publicarForm.artista.value = parecido.artista;
+            parecidoRevisado = true;
+            publicarForm.requestSubmit();
+        };
+        document.getElementById("parecido-no").onclick = () => {
+            parecidoRevisado = true;
+            publicarForm.requestSubmit();
+        };
+        parecidoEl.hidden = false;
         return;
     }
     const boton = document.getElementById("publicar-btn");

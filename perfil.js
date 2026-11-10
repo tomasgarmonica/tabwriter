@@ -42,7 +42,7 @@ async function cargarPerfil(){
             ? "Todavía no publicaste tablaturas. Escribí una en el editor y tocá «Publicar»."
             : "Todavía no publicó tablaturas.";
     }
-    document.getElementById("lista-el").replaceChildren(...data.map(crearTarjetaTab));
+    document.getElementById("lista-el").replaceChildren(...data.map(tab => crearTarjetaTab(tab)));
 }
 
 // Cambiar el nombre de usuario (solo en el perfil propio)

@@ -1,6 +1,8 @@
 const buscarForm = document.getElementById("buscar-form");
 const estadoEl = document.getElementById("estado-el");
 const listaEl = document.getElementById("lista-el");
+// Para contar las versiones de cada tema (se carga una sola vez)
+const temasPromesa = cargarTemas();
 
 for(const tonalidad of TONALIDADES) buscarForm.tonalidad.add(new Option(tonalidad, tonalidad));
 
@@ -43,13 +45,16 @@ async function buscar(){
             .order("creada", { ascending: false });
     }
 
-    const { data, error } = await consulta;
+    const [{ data, error }, temas] = await Promise.all([consulta, temasPromesa]);
     if(error){
         estadoEl.textContent = "No se pudieron cargar las tablaturas: " + error.message;
         return;
     }
     estadoEl.textContent = data.length ? "" : "No se encontraron tablaturas.";
-    listaEl.replaceChildren(...data.map(crearTarjetaTab));
+    listaEl.replaceChildren(...data.map(tab => {
+        const tema = temas.get(claveTema(tab.titulo, tab.artista));
+        return crearTarjetaTab(tab, tema ? tema.ids.length : 1);
+    }));
 }
 
 buscar();

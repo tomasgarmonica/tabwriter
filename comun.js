@@ -190,8 +190,50 @@ function estrellas(promedio){
     return "★".repeat(llenas) + "☆".repeat(5 - llenas);
 }
 
+// Versiones: tabs del mismo tema (título y artista iguales sin contar mayúsculas, tildes ni signos)
+function normalizarTexto(texto){
+    return (texto || "").normalize("NFD").replace(/[̀-ͯ]/g, "")
+        .toLowerCase().replace(/[^a-z0-9ñ]+/g, " ").trim();
+}
+
+function claveTema(titulo, artista){
+    return normalizarTexto(artista) + "|" + normalizarTexto(titulo);
+}
+
+// Cantidad de letras a cambiar, agregar o sacar para pasar de un texto al otro
+function distanciaTextos(a, b){
+    let anterior = Array.from({ length: b.length + 1 }, (_, j) => j);
+    for(let i = 1; i <= a.length; i++){
+        const actual = [i];
+        for(let j = 1; j <= b.length; j++){
+            actual[j] = Math.min(anterior[j] + 1, actual[j - 1] + 1, anterior[j - 1] + (a[i - 1] === b[j - 1] ? 0 : 1));
+        }
+        anterior = actual;
+    }
+    return anterior[b.length];
+}
+
+// Parecidos: hasta 1 error cada 5 letras (al menos 1)
+function textosParecidos(a, b){
+    if(a.replace(/ /g, "") === b.replace(/ /g, "")) return true;   // "Ji ji ji" y "Jijiji"
+    return distanciaTextos(a, b) <= Math.max(1, Math.floor(Math.max(a.length, b.length) / 5));
+}
+
+// Título y artista de todas las tabs, agrupados por tema: Map clave → { titulo, artista, ids }
+async function cargarTemas(){
+    const temas = new Map();
+    if(!db) return temas;
+    const { data } = await db.from("tabs").select("id, titulo, artista").limit(10000);
+    for(const tab of data || []){
+        const clave = claveTema(tab.titulo, tab.artista);
+        if(!temas.has(clave)) temas.set(clave, { titulo: tab.titulo, artista: tab.artista || "", ids: [] });
+        temas.get(clave).ids.push(tab.id);
+    }
+    return temas;
+}
+
 // Tarjeta de una tab para los listados
-function crearTarjetaTab(tab){
+function crearTarjetaTab(tab, versiones){
     const tarjeta = document.createElement("a");
     tarjeta.className = "tarjeta";
     tarjeta.href = "tab.html?id=" + tab.id;
@@ -210,6 +252,12 @@ function crearTarjetaTab(tab){
         ? estrellas(tab.promedio) + " " + tab.promedio + " (" + tab.cantidad_votos + ")"
         : "Sin votos todavía";
 
+    if(versiones > 1){
+        const etiqueta = document.createElement("span");
+        etiqueta.className = "versiones";
+        etiqueta.textContent = versiones + " versiones";
+        tarjeta.append(etiqueta);
+    }
     tarjeta.append(titulo, artista, datos, puntaje);
     return tarjeta;
 }

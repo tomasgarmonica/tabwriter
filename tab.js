@@ -25,6 +25,7 @@ async function cargarTab(){
     document.getElementById("contenido-el").textContent = tab.contenido;
     dibujarTransponer();
     mostrarPuntaje();
+    mostrarVersiones();
     estadoEl.hidden = true;
     document.getElementById("tab-vista").hidden = false;
 
@@ -46,6 +47,32 @@ function mostrarPuntaje(){
     document.getElementById("puntaje-el").textContent = tab.cantidad_votos
         ? estrellas(tab.promedio) + " " + tab.promedio + " (" + tab.cantidad_votos + (tab.cantidad_votos === 1 ? " voto)" : " votos)")
         : "Sin votos todavía";
+}
+
+// Otras tabs del mismo tema: un selector para pasar de una a otra
+async function mostrarVersiones(){
+    const temas = await cargarTemas();
+    const tema = temas.get(claveTema(tab.titulo, tab.artista));
+    if(!tema || tema.ids.length < 2) return;
+    const { data } = await db.from("tabs_resumen")
+        .select("id, tonalidades, dificultad, autor_nombre, promedio, cantidad_votos")
+        .in("id", tema.ids)
+        .order("promedio", { ascending: false })
+        .order("cantidad_votos", { ascending: false });
+    if(!data || data.length < 2) return;
+
+    const selector = document.getElementById("versiones-select");
+    for(const version of data){
+        const votos = version.cantidad_votos ? " · ★ " + version.promedio + " (" + version.cantidad_votos + ")" : "";
+        const texto = "por " + version.autor_nombre + " · " + nombreArmonicas(version.tonalidades)
+            + " · " + DIFICULTADES[version.dificultad] + votos;
+        selector.add(new Option(texto, version.id, false, version.id === tab.id));
+    }
+    selector.addEventListener("change", () => {
+        location.href = "tab.html?id=" + selector.value;
+    });
+    document.getElementById("versiones-ttl").textContent = "Hay " + data.length + " versiones de este tema:";
+    document.getElementById("versiones-el").hidden = false;
 }
 
 function dibujarEstrellas(puntaje){

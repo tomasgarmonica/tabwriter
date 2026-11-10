@@ -223,12 +223,22 @@
         <dialog id="publicar-el">
             <form id="publicar-form" method="dialog">
                 <h2 id="publicar-ttl">Publicar tablatura</h2>
-                <label>Título
-                    <input name="titulo" required maxlength="120">
-                </label>
                 <label>Artista
-                    <input name="artista" maxlength="120">
+                    <input name="artista" maxlength="120" list="artistas-lista" autocomplete="off">
                 </label>
+                <datalist id="artistas-lista"></datalist>
+                <label>Título
+                    <input name="titulo" required maxlength="120" list="titulos-lista" autocomplete="off">
+                </label>
+                <datalist id="titulos-lista"></datalist>
+                <p id="publicar-versiones" class="estado" hidden></p>
+                <div id="publicar-parecido" class="parecido" hidden>
+                    <p id="publicar-parecido-txt"></p>
+                    <div class="acciones">
+                        <button type="button" id="parecido-no">No, es otro tema</button>
+                        <button type="button" class="principal" id="parecido-si">Sí, es ese</button>
+                    </div>
+                </div>
                 <fieldset>
                     <legend>Armónicas que usa</legend>
                     <div id="publicar-tonos" class="tonos"></div>
