@@ -38,7 +38,7 @@ function crearEnlace(texto, href){
 async function dibujarNav(){
     const nav = document.getElementById("nav-el");
     if(!nav) return;
-    nav.replaceChildren(crearEnlace("Escribir", "index.html"), crearEnlace("Tablaturas", "tabs.html"));
+    nav.replaceChildren(crearEnlace("Tablaturas", "index.html"), crearEnlace("Escribir", "escribir.html"));
     const pagina = location.pathname.split("/").pop() || "index.html";
     for(const enlace of nav.children){
         if(enlace.getAttribute("href") === pagina) enlace.classList.add("actual");

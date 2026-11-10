@@ -3,7 +3,7 @@
     "version": "1.0",
     "name": "Armonitabs",
     "action": {
-        "default_popup": "index.html",
+        "default_popup": "escribir.html",
         "default_icon": "favicon.ico"
     }
 }

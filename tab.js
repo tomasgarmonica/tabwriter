@@ -102,7 +102,7 @@ function abrirEnEditor(editar){
         mostrarAviso("Tu navegador no permite guardar datos de esta página");
         return;
     }
-    location.href = "index.html";
+    location.href = "escribir.html";
 }
 
 async function eliminar(){
