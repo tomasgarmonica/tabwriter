@@ -85,13 +85,17 @@ function transponer(contenido, tonalidades, reemplazos, celdaG4 = "(2)"){
                 if(INDICE_CELDA.has(palabra)) indices.push(INDICE_CELDA.get(palabra));
             }
         }
+        // Se elige la octava donde entran más notas y, si empatan, la que necesita menos bends y overblows
         const corrimiento = SEMITONOS_TONALIDAD[seccion.tonalidad] - SEMITONOS_TONALIDAD[destino];
         let mejorOctava = 0;
         let mejorCantidad = -1;
+        let mejorDificultad = Infinity;
         for(const octava of [0, 12, -12]){
-            const cantidad = indices.filter(i => i + corrimiento + octava >= 0 && i + corrimiento + octava < CELDAS.length).length;
-            if(cantidad > mejorCantidad){
-                mejorCantidad = cantidad;
+            const nuevos = indices.map(i => i + corrimiento + octava).filter(i => i >= 0 && i < CELDAS.length);
+            const dificultad = nuevos.filter(i => /b|o/.test(CELDAS[i])).length;
+            if(nuevos.length > mejorCantidad || (nuevos.length === mejorCantidad && dificultad < mejorDificultad)){
+                mejorCantidad = nuevos.length;
+                mejorDificultad = dificultad;
                 mejorOctava = octava;
             }
         }
