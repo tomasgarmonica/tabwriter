@@ -4,7 +4,7 @@ let registrando = false;
 
 // Página a la que volver después de entrar (solo páginas del propio sitio)
 const volverParametro = new URLSearchParams(location.search).get("volver") || "";
-const volver = /^[a-z]+\.html(\?[^\s]*)?$/.test(volverParametro) ? volverParametro : "index.html";
+const volver = /^[a-z0-9-]+\.html(\?[^\s]*)?$/.test(volverParametro) ? volverParametro : "index.html";
 const urlVolver = new URL(volver, location.href).href;
 
 const ERRORES = {

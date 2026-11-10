@@ -1,4 +1,5 @@
-const tabId = parseInt(new URLSearchParams(location.search).get("id"));
+// En las páginas fijas para buscadores el id viene en <body data-tab-id>; si no, en la URL (tab.html?id=5)
+const tabId = parseInt(document.body.dataset.tabId || new URLSearchParams(location.search).get("id"));
 const estadoEl = document.getElementById("estado-el");
 let tab = null;
 let contenidoMostrado = "";   // la tab tal como se ve (puede estar transpuesta)
@@ -11,10 +12,12 @@ async function cargarTab(){
     const { data, error } = await db.from("tabs_resumen").select("*").eq("id", tabId).maybeSingle();
     if(error || !data){
         estadoEl.textContent = error ? "No se pudo cargar la tab: " + error.message : "Esta tab no existe o fue eliminada.";
+        estadoEl.hidden = false;
+        document.getElementById("tab-vista").hidden = true;
         return;
     }
     tab = data;
-    document.title = tab.titulo + " · Armonitabs";
+    datosParaBuscadores();
     document.getElementById("titulo-el").textContent = tab.titulo;
     document.getElementById("artista-el").textContent = tab.artista || "";
     document.getElementById("datos-el").textContent = nombreArmonicas(tab.tonalidades) + " · " + DIFICULTADES[tab.dificultad];
@@ -40,6 +43,33 @@ async function cargarTab(){
             .eq("tab_id", tabId).eq("usuario", usuario.id).maybeSingle();
         dibujarEstrellas(voto ? voto.puntaje : 0);
         document.getElementById("votar-el").hidden = false;
+    }
+}
+
+// Título, descripción y dirección oficial (la página fija), para buscadores y vistas previas
+async function datosParaBuscadores(){
+    document.title = tituloPaginaTab(tab);
+    let descripcion = document.querySelector('meta[name="description"]');
+    if(!descripcion){
+        descripcion = document.createElement("meta");
+        descripcion.name = "description";
+        document.head.append(descripcion);
+    }
+    descripcion.content = descripcionTab(tab);
+    const pagina = urlPaginaTab(tab);
+    let canonica = document.querySelector('link[rel="canonical"]');
+    if(!canonica){
+        canonica = document.createElement("link");
+        canonica.rel = "canonical";
+        document.head.append(canonica);
+    }
+    canonica.href = SITIO + pagina;
+    // Desde tab.html?id=5 se pasa a la dirección linda, si su página ya fue generada
+    if(!document.body.dataset.tabId){
+        try {
+            const respuesta = await fetch(pagina, { method: "HEAD" });
+            if(respuesta.ok) history.replaceState(null, "", pagina);
+        } catch(error){}
     }
 }
 

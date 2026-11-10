@@ -219,6 +219,25 @@ function textosParecidos(a, b){
     return distanciaTextos(a, b) <= Math.max(1, Math.floor(Math.max(a.length, b.length) / 5));
 }
 
+// Para buscadores: cada tab tiene además una página fija (la arma .github/generar-paginas.js cada hora)
+const SITIO = "https://tomasgarmonica.github.io/tabwriter/";
+
+function urlPaginaTab(tab){
+    const nombre = normalizarTexto(tab.titulo + " " + (tab.artista || "")).replace(/ñ/g, "n")
+        .replace(/[^a-z0-9]+/g, "-").slice(0, 80).replace(/^-+|-+$/g, "");
+    return "tab-" + tab.id + (nombre ? "-" + nombre : "") + ".html";
+}
+
+function tituloPaginaTab(tab){
+    return tab.titulo + (tab.artista ? " - " + tab.artista : "") + " · Tablatura para armónica · Armonitabs";
+}
+
+function descripcionTab(tab){
+    return "Cómo tocar " + tab.titulo + (tab.artista ? " de " + tab.artista : "") + " en armónica diatónica. " +
+        "Tablatura para a" + nombreArmonicas(tab.tonalidades).slice(1) + ", nivel " +
+        DIFICULTADES[tab.dificultad].toLowerCase() + ". Transponela a tu armónica y votala en Armonitabs.";
+}
+
 // Título y artista de todas las tabs, agrupados por tema: Map clave → { titulo, artista, ids }
 async function cargarTemas(){
     const temas = new Map();

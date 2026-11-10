@@ -54,7 +54,7 @@ const nombreMensaje = document.getElementById("nombre-mensaje");
 const parametros = new URLSearchParams(location.search);
 const bienvenida = parametros.has("bienvenida") && !parametros.has("id");
 const volverParametro = parametros.get("volver") || "";
-const volver = /^[a-z]+\.html(\?[^\s]*)?$/.test(volverParametro) ? volverParametro : "index.html";
+const volver = /^[a-z0-9-]+\.html(\?[^\s]*)?$/.test(volverParametro) ? volverParametro : "index.html";
 
 function abrirCambioDeNombre(){
     nombreForm.nombre.value = document.getElementById("nombre-el").textContent;

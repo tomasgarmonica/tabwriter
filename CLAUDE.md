@@ -11,6 +11,7 @@ Comunidad de tablaturas para armónica diatónica de la Escuela de Armónica de 
 - `perfil.html`/`perfil.js`, `entrar.html`/`entrar.js` (login por email; el botón de Google aparece solo si el proveedor está activo en Supabase).
 - `comun.js`: cliente Supabase (`db`, es `null` si no hay configuración o falla el CDN: las páginas deben seguir andando), menú, celdas de la armónica (`CELDAS`), marcas de cambio de armónica y `transponer()`.
 - `config.js`: URL y clave publicable de Supabase (son públicas; la seguridad está en las políticas RLS).
+- Publicación: `.github/workflows/publicar.yml` corre con cada push a `main` y cada hora `.github/generar-paginas.js`, que copia el repo y agrega una página fija por tab (`tab-5-tan-solo-los-piojos.html`, armada desde `tab.html`) y `sitemap.xml`, para buscadores. Reusa `urlPaginaTab()`, `tituloPaginaTab()` y `descripcionTab()` de `comun.js`. Si cambian los `id` o el marcado vacío de `tab.html`, actualizar los reemplazos del script (si no coinciden, falla y no publica). Prueba local: `node .github/generar-paginas.js carpeta`.
 - `supabase/`: `esquema.sql` (instalación desde cero, siempre al día) + migraciones numeradas (`02-...sql`).
 
 ## Convenciones
