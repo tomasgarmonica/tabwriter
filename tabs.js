@@ -51,10 +51,17 @@ async function buscar(){
         return;
     }
     estadoEl.textContent = data.length ? "" : "No se encontraron tablaturas.";
-    listaEl.replaceChildren(...data.map(tab => {
-        const tema = temas.get(claveTema(tab.titulo, tab.artista));
-        return crearTarjetaTab(tab, tema ? tema.ids.length : 1);
-    }));
+    // Una tarjeta por tema: la primera versión según el orden elegido (la mejor votada o la más nueva)
+    const vistos = new Set();
+    const tarjetas = [];
+    for(const tab of data){
+        const clave = claveTema(tab.titulo, tab.artista);
+        if(vistos.has(clave)) continue;
+        vistos.add(clave);
+        const tema = temas.get(clave);
+        tarjetas.push(crearTarjetaTab(tab, tema ? tema.ids.length : 1));
+    }
+    listaEl.replaceChildren(...tarjetas);
 }
 
 buscar();

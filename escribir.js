@@ -329,6 +329,9 @@ publicarForm.addEventListener("submit", async (event) => {
         return;
     }
     dejarDeEditar();
+    // Ya está publicada: la próxima vez el editor arranca vacío (los ajustes se mantienen)
+    tabEl.value = "";
+    guardar();
     location.href = "tab.html?id=" + respuesta.data.id;
 });
 
