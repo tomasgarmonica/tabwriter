@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="icon" href="favicon.ico">
     <link rel="stylesheet" href="style.css">
+    <script>try{if((localStorage.getItem("tabwriter-tema")||(matchMedia("(prefers-color-scheme: dark)").matches?"oscuro":"claro"))==="oscuro")document.documentElement.classList.add("oscuro")}catch(e){}</script>
     <title>Armonitabs · Tablaturas para armónica diatónica</title>
     <meta name="description" content="Tablaturas para armónica diatónica en español: buscá cómo tocar tus canciones, transponelas a tu armónica, escribí y compartí las tuyas. De la Escuela de Armónica de Buenos Aires.">
     <link rel="canonical" href="https://tomasgarmonica.github.io/tabwriter/">
@@ -27,11 +28,17 @@
     <nav id="nav-el"></nav>
     <main class="pagina">
         <form id="buscar-form" class="filtros">
-            <input type="search" name="texto" placeholder="Buscar por título o artista">
-            <select name="tonalidad">
+            <input type="search" name="texto" placeholder="Buscar por título o artista" aria-label="Buscar por título o artista">
+            <select name="tonalidad" aria-label="Armónica">
                 <option value="">Todas las armónicas</option>
             </select>
-            <select name="orden">
+            <select name="dificultad" aria-label="Dificultad">
+                <option value="">Todos los niveles</option>
+                <option value="1">Principiante</option>
+                <option value="2">Intermedio</option>
+                <option value="3">Avanzado</option>
+            </select>
+            <select name="orden" aria-label="Orden">
                 <option value="puntaje">Mejor puntuadas</option>
                 <option value="nuevas">Más nuevas</option>
             </select>
@@ -46,6 +53,8 @@
         </aside>
         <p id="estado-el" class="estado"></p>
         <div id="lista-el" class="lista"></div>
+        <button id="mas-btn" class="ver-mas" hidden>Ver más tablaturas</button>
+        <p class="ver-artistas"><a href="artistas.html">Ver todos los artistas</a></p>
     </main>
     <footer>
         <p>Una herramienta de la Escuela de Armónica de Buenos Aires</p>

@@ -28,7 +28,7 @@ async function cargarTab(){
     tab = data;
     datosParaBuscadores();
     document.getElementById("titulo-el").textContent = tab.titulo;
-    document.getElementById("artista-el").textContent = tab.artista || "";
+    mostrarArtista();
     document.getElementById("datos-el").textContent = nombreArmonicas(tab.tonalidades) + " · " + DIFICULTADES[tab.dificultad];
     const autor = document.getElementById("autor-el");
     autor.textContent = tab.autor_nombre;
@@ -38,6 +38,7 @@ async function cargarTab(){
     contenidoMostrado = tab.contenido;
     document.getElementById("contenido-el").textContent = tab.contenido;
     mostrarVideo();
+    enlaceWhatsapp();
     dibujarTransponer();
     mostrarPuntaje();
     mostrarVersiones();
@@ -293,6 +294,83 @@ function aplicarTransposicion(){
     document.getElementById("contenido-el").textContent = contenidoMostrado;
     document.getElementById("fuera-de-registro-el").hidden = !/(^|\s)\?(\s|$)/.test(contenidoMostrado);
 }
+
+// El artista lleva a su página (la arma el generador cada hora); si todavía no existe, a la búsqueda
+async function mostrarArtista(){
+    const artistaEl = document.getElementById("artista-el");
+    if(!tab.artista){
+        artistaEl.textContent = "";
+        return;
+    }
+    const enlace = crearEnlace(tab.artista, "index.html?texto=" + encodeURIComponent(tab.artista));
+    artistaEl.replaceChildren(enlace);
+    try {
+        const pagina = urlPaginaArtista(tab.artista);
+        if((await fetch(pagina, { method: "HEAD" })).ok) enlace.href = pagina;
+    } catch(error){}
+}
+
+// El mensaje de WhatsApp dice de qué tab viene la consulta
+function enlaceWhatsapp(){
+    const tema = tab.titulo + (tab.artista ? " - " + tab.artista : "");
+    document.querySelector(".clases a.boton").href = "https://wa.me/5491130703928?text=" +
+        encodeURIComponent("¡Hola! Vengo de Armonitabs (tab: " + tema + ") y quiero info sobre las clases");
+}
+
+// Modo práctica: tamaño de letra (se recuerda) y avance automático
+const contenidoEl = document.getElementById("contenido-el");
+let tamanoLetra = 16;
+try { tamanoLetra = parseInt(localStorage.getItem("tabwriter-letra")) || 16; } catch(error){}
+
+function aplicarLetra(cambio){
+    tamanoLetra = Math.min(36, Math.max(12, tamanoLetra + cambio));
+    contenidoEl.style.fontSize = tamanoLetra + "px";
+    try { localStorage.setItem("tabwriter-letra", tamanoLetra); } catch(error){}
+}
+document.getElementById("letra-menos").addEventListener("click", () => aplicarLetra(-2));
+document.getElementById("letra-mas").addEventListener("click", () => aplicarLetra(2));
+aplicarLetra(0);
+
+const avanceBtn = document.getElementById("avance-btn");
+let avanceActivo = false;
+let ultimoCuadro = 0;
+let restoAvance = 0;
+
+function moverPantalla(tiempo){
+    if(!avanceActivo) return;
+    const pixelesPorSegundo = parseInt(document.getElementById("velocidad-el").value);
+    if(ultimoCuadro){
+        // Se acumulan las fracciones de píxel para que a velocidad lenta igual avance
+        restoAvance += pixelesPorSegundo * (tiempo - ultimoCuadro) / 1000;
+        const paso = Math.floor(restoAvance);
+        restoAvance -= paso;
+        if(paso) window.scrollBy(0, paso);
+    }
+    ultimoCuadro = tiempo;
+    // Se detiene cuando el final de la tab ya está a la vista
+    if(contenidoEl.getBoundingClientRect().bottom <= window.innerHeight - 20 ||
+        window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 2){
+        cambiarAvance(false);
+        return;
+    }
+    requestAnimationFrame(moverPantalla);
+}
+
+function cambiarAvance(activo){
+    avanceActivo = activo;
+    avanceBtn.textContent = activo ? "⏸ Pausar" : "▶ Avance automático";
+    avanceBtn.classList.toggle("activo", activo);
+    if(activo){
+        ultimoCuadro = 0;
+        restoAvance = 0;
+        // Arranca con el principio de la tab arriba de la pantalla
+        if(contenidoEl.getBoundingClientRect().top > window.innerHeight / 3){
+            window.scrollTo({ top: window.scrollY + contenidoEl.getBoundingClientRect().top - 10 });
+        }
+        requestAnimationFrame(moverPantalla);
+    }
+}
+avanceBtn.addEventListener("click", () => cambiarAvance(!avanceActivo));
 
 function copiar(){
     navigator.clipboard.writeText(contenidoMostrado);

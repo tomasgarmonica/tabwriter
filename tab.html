@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="icon" href="favicon.ico">
     <link rel="stylesheet" href="style.css">
+    <script>try{if((localStorage.getItem("tabwriter-tema")||(matchMedia("(prefers-color-scheme: dark)").matches?"oscuro":"claro"))==="oscuro")document.documentElement.classList.add("oscuro")}catch(e){}</script>
     <title>Armonitabs</title>
 </head>
 <body>
@@ -36,6 +37,21 @@
                 <div id="transponer-el" class="transponer-filas"></div>
                 <p id="fuera-de-registro-el" class="estado" hidden>Las notas marcadas con ? no entran en esa armónica.</p>
             </div>
+            <div class="practica">
+                <span class="practica-grupo">
+                    Letra
+                    <button id="letra-menos" aria-label="Letra más chica">A−</button>
+                    <button id="letra-mas" aria-label="Letra más grande">A+</button>
+                </span>
+                <span class="practica-grupo">
+                    <button id="avance-btn">▶ Avance automático</button>
+                    <select id="velocidad-el" aria-label="Velocidad del avance">
+                        <option value="12">Lento</option>
+                        <option value="25" selected>Medio</option>
+                        <option value="50">Rápido</option>
+                    </select>
+                </span>
+            </div>
             <pre id="contenido-el" class="contenido"></pre>
 
             <div id="votar-el" class="votar" hidden>
@@ -48,6 +64,7 @@
                 <button onclick="copiar()">Copiar</button>
                 <button onclick="descargar()">Descargar</button>
                 <button onclick="abrirEnEditor(false)">Abrir en el editor</button>
+                <button onclick="print()">Imprimir</button>
             </div>
             <div id="propias-el" class="acciones" hidden>
                 <button onclick="abrirEnEditor(true)">Editar</button>

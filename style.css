@@ -1,3 +1,28 @@
+/* Colores del sitio. Modo oscuro: clase "oscuro" en <html> (la pone el script del <head> y el botón del menú) */
+:root{
+    --fondo: white;
+    --texto: black;
+    --acento: #645A78;
+    --acento-fondo: #645A78;
+    --suave: #f3f1f6;
+    --gris: #555;
+    --verde-fondo: #e3f1e6;
+    --verde-texto: #2e6b3a;
+    color-scheme: light;
+}
+
+html.oscuro{
+    --fondo: #1c1a21;
+    --texto: #e9e6ef;
+    --acento: #c3b6dc;
+    --acento-fondo: #5a5070;
+    --suave: #2a2632;
+    --gris: #b0abb9;
+    --verde-fondo: #1f3a26;
+    --verde-texto: #a9dcb4;
+    color-scheme: dark;
+}
+
 [hidden]{
     display: none !important;
 }
@@ -21,7 +46,7 @@ header .logo{
 }
 
 header h1{
-    color: #645A78;
+    color: var(--acento);
     text-decoration: underline;
     font-size: 50px;
 }
@@ -56,7 +81,7 @@ header h1{
     display: flex;
     justify-content: center;
     margin-top: 40px;
-    color: #645A78;
+    color: var(--acento);
     text-decoration: underline;
 }
 
@@ -97,24 +122,24 @@ header h1{
 #tono-el{
     height: 40px;
     padding: 0 10px;
-    border: 2px solid #645A78;
+    border: 2px solid var(--acento);
     border-radius: 0.25rem;
-    background-color: white;
+    background-color: var(--fondo);
 }
 
 #deteccion-el{
     min-width: 120px;
     font-weight: bold;
-    color: #645A78;
+    color: var(--acento);
 }
 
 button.activo{
-    background-color: #645A78;
+    background-color: var(--acento-fondo);
     color: white;
 }
 
 .armonica button.detectada{
-    background-color: #645A78;
+    background-color: var(--acento-fondo);
     color: white;
 }
 
@@ -128,19 +153,19 @@ button{
     border: 0;
     border-radius: 0.25rem;
     cursor: pointer;
-    background-color: white;
-    border: 2px solid #645A78;
+    background-color: var(--fondo);
+    border: 2px solid var(--acento);
     touch-action: manipulation;
 }
 
 /* Marca del elemento seleccionado al moverse con el teclado (no aparece al tocar o hacer clic) */
 :focus-visible{
-    outline: 3px solid #645A78;
+    outline: 3px solid var(--acento);
     outline-offset: 2px;
 }
 
 button:focus-visible{
-    outline: 3px solid #645A78;
+    outline: 3px solid var(--acento);
 }
 
 .acciones{
@@ -158,12 +183,12 @@ button:focus-visible{
     display: flex;
     align-items: center;
     gap: 8px;
-    color: #645A78;
+    color: var(--acento);
     font-weight: bold;
 }
 
 .controles input[type="range"]{
-    accent-color: #645A78;
+    accent-color: var(--acento);
 }
 
 .aviso{
@@ -173,7 +198,7 @@ button:focus-visible{
     transform: translateX(-50%);
     padding: 10px 20px;
     border-radius: 0.25rem;
-    background-color: #645A78;
+    background-color: var(--acento-fondo);
     color: white;
     opacity: 0;
     pointer-events: none;
@@ -187,7 +212,7 @@ button:focus-visible{
 footer{
     padding: 20px;
     text-align: center;
-    background-color: #645A78;
+    background-color: var(--acento-fondo);
     color: white;
 }
 
@@ -201,13 +226,13 @@ footer{
     margin: 20px 0;
     padding: 14px 16px;
     border-radius: 0.25rem;
-    background-color: #f3f1f6;
-    border-left: 4px solid #645A78;
+    background-color: var(--suave);
+    border-left: 4px solid var(--acento);
     text-align: left;
 }
 
 .clases h3{
-    color: #645A78;
+    color: var(--acento);
 }
 
 .clases p{
@@ -219,7 +244,7 @@ footer{
     display: inline-block;
     padding: 10px 16px;
     border-radius: 0.25rem;
-    background-color: #645A78;
+    background-color: var(--acento-fondo);
     color: white;
     font-weight: bold;
     text-decoration: none;
@@ -251,7 +276,7 @@ span.ripple {
     border-radius: 50%;
     transform: scale(0);
     animation: ripple 600ms linear;
-    background-color: #645A78;
+    background-color: var(--acento-fondo);
 }
 
 @keyframes ripple {
@@ -395,6 +420,8 @@ span.ripple {
 
 /* Armonitabs: navegación y páginas de la comunidad */
 body{
+    background-color: var(--fondo);
+    color: var(--texto);
     display: flex;
     flex-direction: column;
     min-height: 100vh;
@@ -413,7 +440,7 @@ nav{
 }
 
 nav a{
-    color: #645A78;
+    color: var(--acento);
     font-weight: bold;
     text-decoration: none;
     padding: 4px 2px;
@@ -422,11 +449,11 @@ nav a{
 
 nav a:hover,
 nav a.actual{
-    border-bottom-color: #645A78;
+    border-bottom-color: var(--acento);
 }
 
 button.principal{
-    background-color: #645A78;
+    background-color: var(--acento-fondo);
     color: white;
 }
 
@@ -444,12 +471,12 @@ button:disabled{
 }
 
 .pagina h2{
-    color: #645A78;
+    color: var(--acento);
     margin-bottom: 6px;
 }
 
 .pagina a{
-    color: #645A78;
+    color: var(--acento);
 }
 
 /* Páginas de texto corrido (privacidad) */
@@ -458,7 +485,7 @@ button:disabled{
 }
 
 .texto h3{
-    color: #645A78;
+    color: var(--acento);
     margin: 24px 0 6px;
 }
 
@@ -473,7 +500,7 @@ button:disabled{
 
 .estado{
     margin: 16px 0;
-    color: #555;
+    color: var(--gris);
 }
 
 .filtros{
@@ -489,9 +516,9 @@ dialog select,
 .formulario input{
     height: 40px;
     padding: 0 10px;
-    border: 2px solid #645A78;
+    border: 2px solid var(--acento);
     border-radius: 0.25rem;
-    background-color: white;
+    background-color: var(--fondo);
     box-sizing: border-box;
     font-size: 15px;
 }
@@ -513,7 +540,7 @@ dialog select,
 .tarjeta{
     display: block;
     padding: 14px 16px;
-    border: 2px solid #645A78;
+    border: 2px solid var(--acento);
     border-radius: 0.25rem;
     color: inherit;
     text-decoration: none;
@@ -524,11 +551,11 @@ dialog select,
 }
 
 .tarjeta:hover{
-    background-color: #f3f1f6;
+    background-color: var(--suave);
 }
 
 .tarjeta h3{
-    color: #645A78;
+    color: var(--acento);
 }
 
 /* Pregunta "¿Es este tema?" al publicar */
@@ -536,12 +563,12 @@ dialog select,
     margin-bottom: 12px;
     padding: 12px;
     border-radius: 0.25rem;
-    background-color: #f3f1f6;
+    background-color: var(--suave);
 }
 
 .parecido p{
     font-weight: bold;
-    color: #645A78;
+    color: var(--acento);
 }
 
 .parecido .acciones > button{
@@ -566,16 +593,16 @@ dialog select,
 
 .versiones-tema label{
     font-weight: bold;
-    color: #645A78;
+    color: var(--acento);
 }
 
 .versiones-tema select{
     max-width: 100%;
     height: 40px;
     padding: 0 10px;
-    border: 2px solid #645A78;
+    border: 2px solid var(--acento);
     border-radius: 0.25rem;
-    background-color: white;
+    background-color: var(--fondo);
     font-size: 15px;
 }
 
@@ -585,8 +612,8 @@ dialog select,
     margin-left: 10px;
     padding: 2px 10px;
     border-radius: 1rem;
-    background-color: #f3f1f6;
-    color: #645A78;
+    background-color: var(--suave);
+    color: var(--acento);
     font-size: 13px;
     font-weight: bold;
 }
@@ -598,18 +625,18 @@ dialog select,
 .datos{
     margin-top: 4px;
     font-size: 14px;
-    color: #555;
+    color: var(--gris);
 }
 
 .puntaje{
     margin-top: 4px;
-    color: #645A78;
+    color: var(--acento);
 }
 
 .contenido{
     margin: 20px 0;
     padding: 16px;
-    border: 2px solid #645A78;
+    border: 2px solid var(--acento);
     border-radius: 0.25rem;
     white-space: pre-wrap;
     font-family: monospace;
@@ -629,7 +656,7 @@ dialog select,
     padding: 0 2px;
     border: 0;
     font-size: 28px;
-    color: #645A78;
+    color: var(--acento);
     background: none;
 }
 
@@ -638,7 +665,7 @@ dialog{
     margin: auto;
     width: min(420px, 90vw);
     padding: 24px;
-    border: 2px solid #645A78;
+    border: 2px solid var(--acento);
     border-radius: 0.5rem;
 }
 
@@ -647,7 +674,7 @@ dialog::backdrop{
 }
 
 dialog h2{
-    color: #645A78;
+    color: var(--acento);
     margin-bottom: 12px;
 }
 
@@ -658,7 +685,7 @@ dialog label,
     gap: 4px;
     margin-bottom: 12px;
     font-weight: bold;
-    color: #645A78;
+    color: var(--acento);
 }
 
 dialog p{
@@ -682,7 +709,7 @@ dialog .acciones > button{
 .separador{
     margin: 16px 0;
     text-align: center;
-    color: #555;
+    color: var(--gris);
 }
 
 /* Página de una tab: todo centrado, pero las líneas de la tablatura alineadas entre sí */
@@ -707,14 +734,14 @@ dialog .acciones > button{
 dialog fieldset{
     margin-bottom: 12px;
     padding: 8px 10px 10px;
-    border: 2px solid #645A78;
+    border: 2px solid var(--acento);
     border-radius: 0.25rem;
 }
 
 dialog legend{
     padding: 0 4px;
     font-weight: bold;
-    color: #645A78;
+    color: var(--acento);
 }
 
 .tonos{
@@ -733,18 +760,18 @@ dialog .tonos label{
 }
 
 .tonos input{
-    accent-color: #645A78;
+    accent-color: var(--acento);
 }
 
 .transponer{
     margin-top: 20px;
     padding: 12px;
     border-radius: 0.25rem;
-    background-color: #f3f1f6;
+    background-color: var(--suave);
 }
 
 .transponer h3{
-    color: #645A78;
+    color: var(--acento);
 }
 
 .transponer p{
@@ -762,16 +789,16 @@ dialog .tonos label{
 
 .transponer-filas label{
     font-weight: bold;
-    color: #645A78;
+    color: var(--acento);
 }
 
 .transponer-filas select{
     height: 34px;
     margin-left: 4px;
     padding: 0 8px;
-    border: 2px solid #645A78;
+    border: 2px solid var(--acento);
     border-radius: 0.25rem;
-    background-color: white;
+    background-color: var(--fondo);
 }
 
 .transponer-filas .fila{
@@ -787,7 +814,7 @@ dialog .tonos label{
     align-items: center;
     gap: 6px;
     font-weight: bold;
-    color: #645A78;
+    color: var(--acento);
 }
 
 .octava button{
@@ -814,13 +841,13 @@ dialog .tonos label{
 }
 
 .etiqueta.profe{
-    background-color: #645A78;
+    background-color: var(--acento-fondo);
     color: white;
 }
 
 .etiqueta.revisada{
-    background-color: #e3f1e6;
-    color: #2e6b3a;
+    background-color: var(--verde-fondo);
+    color: var(--verde-texto);
 }
 
 .sello{
@@ -828,8 +855,8 @@ dialog .tonos label{
     margin-top: 8px;
     padding: 4px 12px;
     border-radius: 1rem;
-    background-color: #e3f1e6;
-    color: #2e6b3a;
+    background-color: var(--verde-fondo);
+    color: var(--verde-texto);
     font-weight: bold;
     font-size: 14px;
 }
@@ -852,12 +879,12 @@ dialog .tonos label{
 .moderar{
     margin-top: 20px;
     padding: 12px;
-    border: 2px dashed #645A78;
+    border: 2px dashed var(--acento);
     border-radius: 0.25rem;
 }
 
 .moderar h3{
-    color: #645A78;
+    color: var(--acento);
 }
 
 .reportar{
@@ -866,18 +893,18 @@ dialog .tonos label{
 }
 
 .pagina .reportar a{
-    color: #777;
+    color: var(--gris);
 }
 
 .ayuda{
     margin-bottom: 8px;
-    color: #555;
+    color: var(--gris);
     font-size: 14px;
 }
 
 .reporte{
     padding: 14px 16px;
-    border: 2px solid #645A78;
+    border: 2px solid var(--acento);
     border-radius: 0.25rem;
 }
 
@@ -896,9 +923,122 @@ dialog .tonos label{
 
 dialog textarea{
     padding: 8px 10px;
-    border: 2px solid #645A78;
+    border: 2px solid var(--acento);
     border-radius: 0.25rem;
     font-family: inherit;
     font-size: 15px;
     resize: vertical;
+}
+
+/* Controles de formulario con los colores del tema */
+button, input, select, textarea{
+    color: var(--texto);
+}
+
+input, select, textarea{
+    background-color: var(--fondo);
+}
+
+button.principal, button.activo{
+    color: white;
+}
+
+/* Botón de modo oscuro en el menú */
+nav button.tema{
+    width: auto;
+    height: auto;
+    padding: 2px 8px;
+    border: 0;
+    background: none;
+    font-size: 18px;
+    line-height: 1;
+}
+
+.ver-mas{
+    display: block;
+    width: auto;
+    margin: 16px auto 0;
+    padding: 0 20px;
+}
+
+/* Modo práctica en la página de una tab */
+.practica{
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 8px 20px;
+    margin-top: 20px;
+    color: var(--acento);
+    font-weight: bold;
+}
+
+.practica-grupo{
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.practica button{
+    width: auto;
+    padding: 0 12px;
+}
+
+.practica select{
+    height: 40px;
+    padding: 0 8px;
+    border: 2px solid var(--acento);
+    border-radius: 0.25rem;
+}
+
+/* Al imprimir una tab: solo título, datos y la tablatura */
+@media print{
+    :root, html.oscuro{
+        --fondo: white;
+        --texto: black;
+        --acento: #645A78;
+        --gris: #555;
+    }
+    nav, footer, .clases, .transponer, .practica, .acciones, .votar, #votar-entrar-el, .reportar,
+    .moderar, .video, .versiones-tema, .sello, dialog, .aviso{
+        display: none !important;
+    }
+    header{
+        margin-top: 0;
+    }
+    header .logo{
+        height: 60px;
+    }
+    header h1{
+        font-size: 28px;
+    }
+    .pagina{
+        padding: 10px 0;
+    }
+    .contenido{
+        border: 0;
+        padding: 0;
+    }
+    #tab-vista::after{
+        content: "Armonitabs · Escuela de Armónica de Buenos Aires · tomasgarmonica.github.io/tabwriter";
+        display: block;
+        margin-top: 20px;
+        font-size: 11px;
+        color: #555;
+    }
+}
+
+/* Lista de artistas (página generada artistas.html) */
+.ver-artistas{
+    margin-top: 20px;
+    text-align: center;
+}
+
+.artistas{
+    columns: 3 200px;
+    padding-left: 20px;
+    line-height: 1.8;
+}
+
+.pagina .artistas a{
+    font-weight: bold;
 }

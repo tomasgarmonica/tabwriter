@@ -15,7 +15,7 @@ vm.runInContext(fs.readFileSync(path.join(RAIZ, "config.js"), "utf8"), contexto)
 vm.runInContext(fs.readFileSync(path.join(RAIZ, "comun.js"), "utf8"), contexto);
 const { SUPABASE_URL, SUPABASE_ANON_KEY, SITIO, DIFICULTADES } =
     vm.runInContext("({ SUPABASE_URL, SUPABASE_ANON_KEY, SITIO, DIFICULTADES })", contexto);
-const { urlPaginaTab, tituloPaginaTab, descripcionTab, nombreArmonicas, estrellas } = contexto;
+const { urlPaginaTab, urlPaginaArtista, tituloPaginaTab, descripcionTab, nombreArmonicas, estrellas, normalizarTexto } = contexto;
 
 function escapar(texto){
     return String(texto).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
@@ -62,7 +62,8 @@ function paginaDeTab(plantilla, tab){
     html = reemplazar(html, '<p id="estado-el" class="estado">', '<p id="estado-el" class="estado" hidden>');
     html = reemplazar(html, '<article id="tab-vista" hidden>', '<article id="tab-vista">');
     html = reemplazar(html, '<h2 id="titulo-el"></h2>', `<h2 id="titulo-el">${escapar(tab.titulo)}</h2>`);
-    html = reemplazar(html, '<p id="artista-el" class="artista"></p>', `<p id="artista-el" class="artista">${escapar(tab.artista || "")}</p>`);
+    const artista = tab.artista ? `<a href="${urlPaginaArtista(tab.artista)}">${escapar(tab.artista)}</a>` : "";
+    html = reemplazar(html, '<p id="artista-el" class="artista"></p>', `<p id="artista-el" class="artista">${artista}</p>`);
     html = reemplazar(html, '<span id="datos-el"></span>',
         `<span id="datos-el">${escapar(nombreArmonicas(tab.tonalidades) + " · " + DIFICULTADES[tab.dificultad])}</span>`);
     html = reemplazar(html, '<a id="autor-el"></a>', `<a id="autor-el" href="perfil.html?id=${tab.autor}">${escapar(tab.autor_nombre)}</a>`);
@@ -71,11 +72,78 @@ function paginaDeTab(plantilla, tab){
     return html;
 }
 
-function sitemap(tabs){
+// Artistas: { nombre, tabs } con el nombre como lo escribió la primera tab (sin contar mayúsculas ni tildes)
+function agruparArtistas(tabs){
+    const porClave = new Map();
+    for(const tab of tabs){
+        if(!tab.artista || !normalizarTexto(tab.artista)) continue;
+        const clave = normalizarTexto(tab.artista);
+        if(!porClave.has(clave)) porClave.set(clave, { nombre: tab.artista.trim(), tabs: [] });
+        porClave.get(clave).tabs.push(tab);
+    }
+    return [...porClave.values()].sort((a, b) => a.nombre.localeCompare(b.nombre, "es"));
+}
+
+// Páginas simples (artista y lista de artistas) armadas sobre privacidad.html: mismo encabezado, menú y pie
+function paginaSimple(base, { titulo, descripcion, url, contenido }){
+    let html = reemplazar(base, "<title>Privacidad y condiciones · Armonitabs</title>", `<title>${escapar(titulo)}</title>
+    <meta name="description" content="${escapar(descripcion)}">
+    <link rel="canonical" href="${url}">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="Armonitabs">
+    <meta property="og:title" content="${escapar(titulo)}">
+    <meta property="og:description" content="${escapar(descripcion)}">
+    <meta property="og:url" content="${url}">
+    <meta property="og:image" content="${SITIO}img/logo-escuela.png">
+    <meta property="og:locale" content="es_AR">`);
+    const main = html.match(/<main class="pagina texto">[\s\S]*?<\/main>/);
+    if(!main) throw new Error("No se encontró <main class=\"pagina texto\"> en privacidad.html");
+    return html.replace(main[0], () => `<main class="pagina">\n${contenido}\n    </main>`);
+}
+
+function paginaDeArtista(base, artista){
+    const temas = [...new Set(artista.tabs.map(tab => tab.titulo))];
+    const tarjetas = artista.tabs
+        .slice().sort((a, b) => a.titulo.localeCompare(b.titulo, "es") || b.promedio - a.promedio)
+        .map(tab => `            <a class="tarjeta" href="${urlPaginaTab(tab)}">
+                <h3>${escapar(tab.titulo)}</h3>
+                <p class="datos">${escapar(nombreArmonicas(tab.tonalidades) + " · " + DIFICULTADES[tab.dificultad] + " · por " + tab.autor_nombre)}</p>
+            </a>`).join("\n");
+    return paginaSimple(base, {
+        titulo: artista.nombre + " · Tablaturas para armónica · Armonitabs",
+        descripcion: "Tablaturas para armónica de " + artista.nombre + ": " + temas.slice(0, 8).join(", ") +
+            ". Cómo tocar sus canciones en armónica diatónica.",
+        url: SITIO + urlPaginaArtista(artista.nombre),
+        contenido: `        <h2>${escapar(artista.nombre)}</h2>
+        <p class="ayuda">Tablaturas para armónica de ${escapar(artista.nombre)} (${artista.tabs.length === 1 ? "1 tab" : artista.tabs.length + " tabs"}). <a href="artistas.html">Ver todos los artistas</a></p>
+        <div class="lista">
+${tarjetas}
+        </div>`,
+    });
+}
+
+function paginaDeArtistas(base, artistas){
+    const enlaces = artistas.map(a => `            <li><a href="${urlPaginaArtista(a.nombre)}">${escapar(a.nombre)}</a> <span class="datos">(${a.tabs.length})</span></li>`).join("\n");
+    return paginaSimple(base, {
+        titulo: "Artistas · Tablaturas para armónica · Armonitabs",
+        descripcion: "Todos los artistas con tablaturas para armónica diatónica en Armonitabs: " +
+            artistas.slice(0, 10).map(a => a.nombre).join(", ") + ".",
+        url: SITIO + "artistas.html",
+        contenido: `        <h2>Artistas</h2>
+        <p class="ayuda">Todos los artistas con tablaturas para armónica en Armonitabs.</p>
+        <ul class="artistas">
+${enlaces}
+        </ul>`,
+    });
+}
+
+function sitemap(tabs, artistas){
     const direcciones = [
         { loc: SITIO },
         { loc: SITIO + "escribir.html" },
         { loc: SITIO + "privacidad.html" },
+        { loc: SITIO + "artistas.html" },
+        ...artistas.map(a => ({ loc: SITIO + urlPaginaArtista(a.nombre) })),
         ...tabs.map(tab => ({ loc: SITIO + urlPaginaTab(tab), lastmod: tab.actualizada.slice(0, 10) })),
     ];
     return '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' +
@@ -95,8 +163,14 @@ async function main(){
     for(const tab of tabs){
         fs.writeFileSync(path.join(SALIDA, urlPaginaTab(tab)), paginaDeTab(plantilla, tab));
     }
-    fs.writeFileSync(path.join(SALIDA, "sitemap.xml"), sitemap(tabs));
-    console.log(tabs.length + " páginas de tabs y sitemap.xml en " + SALIDA);
+    const base = fs.readFileSync(path.join(RAIZ, "privacidad.html"), "utf8").replace(/\r\n/g, "\n");
+    const artistas = agruparArtistas(tabs);
+    for(const artista of artistas){
+        fs.writeFileSync(path.join(SALIDA, urlPaginaArtista(artista.nombre)), paginaDeArtista(base, artista));
+    }
+    fs.writeFileSync(path.join(SALIDA, "artistas.html"), paginaDeArtistas(base, artistas));
+    fs.writeFileSync(path.join(SALIDA, "sitemap.xml"), sitemap(tabs, artistas));
+    console.log(tabs.length + " páginas de tabs, " + artistas.length + " de artistas y sitemap.xml en " + SALIDA);
 }
 
 main().catch(error => {

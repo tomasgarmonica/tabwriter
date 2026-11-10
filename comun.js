@@ -152,10 +152,31 @@ function crearEnlace(texto, href){
     return enlace;
 }
 
+// Modo oscuro: se recuerda en el navegador; si nunca se eligió, sigue al sistema (ver el script del <head>)
+function botonTema(){
+    const boton = document.createElement("button");
+    boton.className = "tema";
+    const dibujar = () => {
+        const oscuro = document.documentElement.classList.contains("oscuro");
+        boton.textContent = oscuro ? "☀" : "☾";
+        boton.title = oscuro ? "Modo claro" : "Modo oscuro";
+        boton.setAttribute("aria-label", boton.title);
+    };
+    boton.addEventListener("click", () => {
+        const oscuro = document.documentElement.classList.toggle("oscuro");
+        try { localStorage.setItem("tabwriter-tema", oscuro ? "oscuro" : "claro"); } catch(error){}
+        dibujar();
+    });
+    dibujar();
+    return boton;
+}
+
 async function dibujarNav(){
     const nav = document.getElementById("nav-el");
     if(!nav) return;
     nav.replaceChildren(crearEnlace("Tablaturas", "index.html"), crearEnlace("Escribir", "escribir.html"));
+    const tema = botonTema();
+    nav.append(tema);
     const pagina = location.pathname.split("/").pop() || "index.html";
     for(const enlace of nav.children){
         if(enlace.getAttribute("href") === pagina) enlace.classList.add("actual");
@@ -184,6 +205,7 @@ async function dibujarNav(){
     } else {
         nav.append(crearEnlace("Entrar", urlEntrar()));
     }
+    nav.append(tema);   // siempre al final
 }
 
 // Link a la página de login que después vuelve a la página actual
@@ -250,6 +272,10 @@ function urlPaginaTab(tab){
     return "tab-" + tab.id + (nombre ? "-" + nombre : "") + ".html";
 }
 
+function urlPaginaArtista(artista){
+    return "artista-" + normalizarTexto(artista).replace(/ñ/g, "n").replace(/[^a-z0-9]+/g, "-").slice(0, 60).replace(/^-+|-+$/g, "") + ".html";
+}
+
 function tituloPaginaTab(tab){
     return tab.titulo + (tab.artista ? " - " + tab.artista : "") + " · Tablatura para armónica · Armonitabs";
 }
@@ -264,8 +290,14 @@ function descripcionTab(tab){
 async function cargarTemas(){
     const temas = new Map();
     if(!db) return temas;
-    const { data } = await db.from("tabs").select("id, titulo, artista").limit(10000);
-    for(const tab of data || []){
+    // De a 1000, que es lo máximo que devuelve Supabase por consulta
+    const data = [];
+    for(let desde = 0; ; desde += 1000){
+        const { data: pagina } = await db.from("tabs").select("id, titulo, artista").order("id").range(desde, desde + 999);
+        data.push(...(pagina || []));
+        if(!pagina || pagina.length < 1000) break;
+    }
+    for(const tab of data){
         const clave = claveTema(tab.titulo, tab.artista);
         if(!temas.has(clave)) temas.set(clave, { titulo: tab.titulo, artista: tab.artista || "", ids: [] });
         temas.get(clave).ids.push(tab.id);
