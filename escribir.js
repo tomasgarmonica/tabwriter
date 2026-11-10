@@ -156,24 +156,43 @@ async function abrirPublicar(){
         return;
     }
 
-    const selectTono = document.getElementById("publicar-tono");
-    if(!selectTono.options.length){
-        for(const tonalidad of TONALIDADES) selectTono.add(new Option(tonalidad, tonalidad));
+    const tonos = document.getElementById("publicar-tonos");
+    if(!tonos.children.length){
+        for(const tonalidad of TONALIDADES){
+            const opcion = document.createElement("label");
+            const casilla = document.createElement("input");
+            casilla.type = "checkbox";
+            casilla.name = "tonalidades";
+            casilla.value = tonalidad;
+            opcion.append(casilla, tonalidad);
+            tonos.append(opcion);
+        }
     }
     const editando = tabEditando();
+    // Armónicas sugeridas: las de la tab que se edita, las marcadas en el texto o la elegida para el micrófono
+    let sugeridas = armonicasEnContenido(tabEl.value);
+    if(editando) sugeridas = editando.tonalidades || [editando.tonalidad];
+    if(!sugeridas.length) sugeridas = [document.getElementById("tono-el").selectedOptions[0].text];
+    for(const casilla of tonos.querySelectorAll("input")) casilla.checked = sugeridas.includes(casilla.value);
+
     if(editando){
         publicarForm.titulo.value = editando.titulo;
         publicarForm.artista.value = editando.artista || "";
-        publicarForm.tonalidad.value = editando.tonalidad;
         publicarForm.dificultad.value = editando.dificultad;
         document.getElementById("publicar-editando").hidden = false;
         document.getElementById("publicar-ttl").textContent = "Guardar cambios";
         document.getElementById("publicar-btn").textContent = "Guardar";
-    } else {
-        // La tonalidad elegida para el micrófono es la sugerida
-        publicarForm.tonalidad.value = document.getElementById("tono-el").selectedOptions[0].text;
     }
     publicarEl.showModal();
+}
+
+// Marca dentro de la tab desde dónde se toca con la armónica elegida en el selector
+function cambioDeArmonica(){
+    let texto = tabEl.value;
+    if(texto !== "" && !texto.endsWith("\n")) texto += "\n";
+    tabEl.value = texto + marcaArmonica(document.getElementById("tono-el").selectedOptions[0].text) + "\n";
+    tabEl.scrollTop = tabEl.scrollHeight;
+    guardar();
 }
 
 function cerrarPublicar(){
@@ -182,12 +201,22 @@ function cerrarPublicar(){
 
 publicarForm.addEventListener("submit", async (event) => {
     event.preventDefault();
+    // Primero las armónicas en el orden en que aparecen en la tab, después el resto de las marcadas
+    const marcadas = [...publicarForm.querySelectorAll("input[name=tonalidades]:checked")].map(casilla => casilla.value);
+    const tonalidades = [
+        ...armonicasEnContenido(tabEl.value).filter(tonalidad => marcadas.includes(tonalidad)),
+        ...marcadas,
+    ].filter((tonalidad, i, lista) => lista.indexOf(tonalidad) === i);
+    if(tonalidades.length < 1 || tonalidades.length > 4){
+        mostrarAviso("Marcá entre 1 y 4 armónicas");
+        return;
+    }
     const boton = document.getElementById("publicar-btn");
     boton.disabled = true;
     const datos = {
         titulo: publicarForm.titulo.value.trim(),
         artista: publicarForm.artista.value.trim() || null,
-        tonalidad: publicarForm.tonalidad.value,
+        tonalidades,
         dificultad: parseInt(publicarForm.dificultad.value),
         contenido: tabEl.value,
     };

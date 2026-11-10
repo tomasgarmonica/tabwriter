@@ -29,12 +29,12 @@ async function buscar(){
     listaEl.replaceChildren();
 
     let consulta = db.from("tabs_resumen")
-        .select("id, titulo, artista, tonalidad, dificultad, autor_nombre, promedio, cantidad_votos")
+        .select("id, titulo, artista, tonalidades, dificultad, autor_nombre, promedio, cantidad_votos")
         .limit(100);
     // Se sacan los caracteres que tienen significado especial en el filtro
     const texto = buscarForm.texto.value.replace(/[,()%*\\]/g, " ").trim();
     if(texto) consulta = consulta.or(`titulo.ilike.%${texto}%,artista.ilike.%${texto}%`);
-    if(buscarForm.tonalidad.value) consulta = consulta.eq("tonalidad", buscarForm.tonalidad.value);
+    if(buscarForm.tonalidad.value) consulta = consulta.contains("tonalidades", [buscarForm.tonalidad.value]);
     if(buscarForm.orden.value === "nuevas"){
         consulta = consulta.order("creada", { ascending: false });
     } else {

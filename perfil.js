@@ -25,7 +25,7 @@ async function cargarPerfil(){
     document.getElementById("nombre-el").textContent = perfil.nombre;
 
     const { data, error } = await db.from("tabs_resumen")
-        .select("id, titulo, artista, tonalidad, dificultad, autor_nombre, promedio, cantidad_votos")
+        .select("id, titulo, artista, tonalidades, dificultad, autor_nombre, promedio, cantidad_votos")
         .eq("autor", perfilId)
         .order("creada", { ascending: false });
     if(error){

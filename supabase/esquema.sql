@@ -14,7 +14,10 @@ create table public.tabs (
     autor uuid not null default auth.uid() references public.perfiles on delete cascade,
     titulo text not null check (char_length(titulo) between 1 and 120),
     artista text check (char_length(artista) <= 120),
-    tonalidad text not null check (tonalidad in ('G','Ab','A','Bb','B','C','Db','D','Eb','E','F','F#')),
+    tonalidades text[] not null check (
+        cardinality(tonalidades) between 1 and 4
+        and tonalidades <@ array['G','Ab','A','Bb','B','C','Db','D','Eb','E','F','F#']
+    ),
     dificultad smallint not null check (dificultad between 1 and 3),
     contenido text not null check (char_length(contenido) between 1 and 20000),
     creada timestamptz not null default now(),
@@ -32,7 +35,7 @@ create table public.votos (
 
 -- Tabs con autor y promedio de puntaje, para listar y mostrar
 create view public.tabs_resumen with (security_invoker = true) as
-select t.id, t.titulo, t.artista, t.tonalidad, t.dificultad, t.contenido,
+select t.id, t.titulo, t.artista, t.tonalidades, t.dificultad, t.contenido,
        t.autor, p.nombre as autor_nombre, t.creada, t.actualizada,
        coalesce(round(avg(v.puntaje), 1), 0) as promedio,
        count(v.puntaje)::int as cantidad_votos

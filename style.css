@@ -569,3 +569,74 @@ dialog .acciones > button{
 #tab-vista .votar{
     justify-content: center;
 }
+
+/* Varias armónicas y transposición */
+dialog fieldset{
+    margin-bottom: 12px;
+    padding: 8px 10px 10px;
+    border: 2px solid #645A78;
+    border-radius: 0.25rem;
+}
+
+dialog legend{
+    padding: 0 4px;
+    font-weight: bold;
+    color: #645A78;
+}
+
+.tonos{
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 6px;
+}
+
+dialog .tonos label{
+    flex-direction: row;
+    align-items: center;
+    gap: 4px;
+    margin: 0;
+    color: inherit;
+    font-weight: normal;
+}
+
+.tonos input{
+    accent-color: #645A78;
+}
+
+.transponer{
+    margin-top: 20px;
+    padding: 12px;
+    border-radius: 0.25rem;
+    background-color: #f3f1f6;
+}
+
+.transponer h3{
+    color: #645A78;
+}
+
+.transponer p{
+    margin: 4px 0;
+    font-size: 14px;
+}
+
+.transponer-filas{
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 8px 20px;
+    margin-top: 8px;
+}
+
+.transponer-filas label{
+    font-weight: bold;
+    color: #645A78;
+}
+
+.transponer-filas select{
+    height: 34px;
+    margin-left: 4px;
+    padding: 0 8px;
+    border: 2px solid #645A78;
+    border-radius: 0.25rem;
+    background-color: white;
+}

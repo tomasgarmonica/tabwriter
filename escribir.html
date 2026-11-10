@@ -196,6 +196,7 @@
                 <option value="6">F#</option>
             </select>
             <button id="g4-btn" onclick="toggleG4()">G4 como: (2)</button>
+            <button onclick="cambioDeArmonica()">Cambio de armónica</button>
         </div>
 
         <div class="controles">
@@ -228,9 +229,10 @@
                 <label>Artista
                     <input name="artista" maxlength="120">
                 </label>
-                <label>Armónica en
-                    <select name="tonalidad" id="publicar-tono"></select>
-                </label>
+                <fieldset>
+                    <legend>Armónicas que usa</legend>
+                    <div id="publicar-tonos" class="tonos"></div>
+                </fieldset>
                 <label>Dificultad
                     <select name="dificultad">
                         <option value="1">Principiante</option>

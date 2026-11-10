@@ -1,6 +1,7 @@
 const tabId = parseInt(new URLSearchParams(location.search).get("id"));
 const estadoEl = document.getElementById("estado-el");
 let tab = null;
+let contenidoMostrado = "";   // la tab tal como se ve (puede estar transpuesta)
 
 async function cargarTab(){
     if(!db){
@@ -16,11 +17,13 @@ async function cargarTab(){
     document.title = tab.titulo + " · Armonitabs";
     document.getElementById("titulo-el").textContent = tab.titulo;
     document.getElementById("artista-el").textContent = tab.artista || "";
-    document.getElementById("datos-el").textContent = "Armónica en " + tab.tonalidad + " · " + DIFICULTADES[tab.dificultad];
+    document.getElementById("datos-el").textContent = nombreArmonicas(tab.tonalidades) + " · " + DIFICULTADES[tab.dificultad];
     const autor = document.getElementById("autor-el");
     autor.textContent = tab.autor_nombre;
     autor.href = "perfil.html?id=" + tab.autor;
+    contenidoMostrado = tab.contenido;
     document.getElementById("contenido-el").textContent = tab.contenido;
+    dibujarTransponer();
     mostrarPuntaje();
     estadoEl.hidden = true;
     document.getElementById("tab-vista").hidden = false;
@@ -74,26 +77,63 @@ async function votar(puntaje){
     }
 }
 
+//Transponer
+function dibujarTransponer(){
+    const filas = document.getElementById("transponer-el");
+    for(const tonalidad of tab.tonalidades){
+        const fila = document.createElement("label");
+        fila.append("Armónica en " + tonalidad + " → ");
+        const select = document.createElement("select");
+        select.dataset.original = tonalidad;
+        for(const opcion of TONALIDADES) select.add(new Option(opcion, opcion));
+        select.value = tonalidad;
+        select.addEventListener("change", aplicarTransposicion);
+        fila.append(select);
+        filas.append(fila);
+    }
+}
+
+// G4 se escribe como lo eligió el usuario en el editor
+function celdaG4(){
+    try {
+        const ajustes = JSON.parse(localStorage.getItem("tabwriter-ajustes"));
+        if(ajustes && ajustes.g4) return ajustes.g4;
+    } catch(error){}
+    return "(2)";
+}
+
+function aplicarTransposicion(){
+    const reemplazos = {};
+    for(const select of document.querySelectorAll("#transponer-el select")){
+        reemplazos[select.dataset.original] = select.value;
+    }
+    contenidoMostrado = transponer(tab.contenido, tab.tonalidades, reemplazos, celdaG4());
+    document.getElementById("contenido-el").textContent = contenidoMostrado;
+    document.getElementById("fuera-de-registro-el").hidden = !/(^|\s)\?(\s|$)/.test(contenidoMostrado);
+}
+
 function copiar(){
-    navigator.clipboard.writeText(tab.contenido);
+    navigator.clipboard.writeText(contenidoMostrado);
     mostrarAviso("¡Tab copiada al portapapeles!");
 }
 
 function descargar(){
-    descargarTexto(tab.contenido, tab.titulo);
+    descargarTexto(contenidoMostrado, tab.titulo);
 }
 
-// Lleva la tab al editor. Con "Editar", al publicar se actualiza esta misma tab.
+// Lleva la tab al editor (transpuesta, si se eligió otra armónica).
+// Con "Editar" se lleva la original y al publicar se actualiza esta misma tab.
 function abrirEnEditor(editar){
+    const contenido = editar ? tab.contenido : contenidoMostrado;
     let actual = "";
     try { actual = localStorage.getItem("tabwriter-tab") || ""; } catch(error){}
-    if(actual.trim() && actual !== tab.contenido
+    if(actual.trim() && actual !== contenido
         && !confirm("En el editor hay otra tab sin publicar. ¿Reemplazarla por esta?")) return;
     try {
-        localStorage.setItem("tabwriter-tab", tab.contenido);
+        localStorage.setItem("tabwriter-tab", contenido);
         if(editar){
             localStorage.setItem("armonitabs-editando", JSON.stringify({
-                id: tab.id, titulo: tab.titulo, artista: tab.artista, tonalidad: tab.tonalidad, dificultad: tab.dificultad
+                id: tab.id, titulo: tab.titulo, artista: tab.artista, tonalidades: tab.tonalidades, dificultad: tab.dificultad
             }));
         } else {
             localStorage.removeItem("armonitabs-editando");
