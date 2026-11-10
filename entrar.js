@@ -62,6 +62,10 @@ entrarForm.addEventListener("submit", async (event) => {
 
 async function registrar(){
     const nombre = entrarForm.nombre.value.trim();
+    if(nombreReservado(nombre)){
+        mensajeEl.textContent = "Ese nombre está reservado para la Escuela. Elegí otro.";
+        return;
+    }
     // ilike sin comodines: compara sin distinguir mayúsculas
     const { data: existente } = await db.from("perfiles").select("id")
         .ilike("nombre", nombre.replace(/[%_\\]/g, "\\$&")).maybeSingle();

@@ -16,16 +16,20 @@ async function cargarPerfil(){
         perfilId = usuario.id;
     }
 
-    const { data: perfil } = await db.from("perfiles").select("nombre").eq("id", perfilId).maybeSingle();
+    const { data: perfil } = await db.from("perfiles").select("nombre, profe").eq("id", perfilId).maybeSingle();
     if(!perfil){
         estadoEl.textContent = "Este usuario no existe.";
         return;
     }
     document.title = perfil.nombre + " · Armonitabs";
-    document.getElementById("nombre-el").textContent = perfil.nombre;
+    const nombreEl = document.getElementById("nombre-el");
+    nombreEl.textContent = perfil.nombre;
+    nombreEl.dataset.nombre = perfil.nombre;
+    if(perfil.profe) nombreEl.append(" ", crearEtiqueta("Profe", "profe"));
+    if(usuario && usuario.admin) mostrarBotonProfe(perfilId, perfil.profe);
 
     const { data, error } = await db.from("tabs_resumen")
-        .select("id, titulo, artista, tonalidades, dificultad, autor_nombre, promedio, cantidad_votos")
+        .select("id, titulo, artista, tonalidades, dificultad, autor_nombre, autor_profe, revisada, promedio, cantidad_votos")
         .eq("autor", perfilId)
         .order("creada", { ascending: false });
     if(error){
@@ -45,6 +49,22 @@ async function cargarPerfil(){
     document.getElementById("lista-el").replaceChildren(...data.map(tab => crearTarjetaTab(tab)));
 }
 
+// Administradores: marcar o desmarcar a un usuario como profe
+function mostrarBotonProfe(perfilId, esProfe){
+    const enlace = document.getElementById("profe-el");
+    enlace.textContent = esProfe ? "Quitar la marca de profe" : "Marcar como profe";
+    enlace.hidden = false;
+    enlace.onclick = async (event) => {
+        event.preventDefault();
+        const { data, error } = await db.from("perfiles").update({ profe: !esProfe }).eq("id", perfilId).select("profe");
+        if(error || !data.length){
+            mostrarAviso("No se pudo cambiar" + (error ? ": " + error.message : ""));
+            return;
+        }
+        location.reload();
+    };
+}
+
 // Cambiar el nombre de usuario (solo en el perfil propio)
 const nombreDialogo = document.getElementById("nombre-dialogo");
 const nombreForm = document.getElementById("nombre-form");
@@ -57,7 +77,7 @@ const volverParametro = parametros.get("volver") || "";
 const volver = /^[a-z0-9-]+\.html(\?[^\s]*)?$/.test(volverParametro) ? volverParametro : "index.html";
 
 function abrirCambioDeNombre(){
-    nombreForm.nombre.value = document.getElementById("nombre-el").textContent;
+    nombreForm.nombre.value = document.getElementById("nombre-el").dataset.nombre;
     nombreMensaje.textContent = "";
     if(bienvenida){
         document.getElementById("nombre-ttl").textContent = "¡Te damos la bienvenida!";
@@ -97,7 +117,12 @@ nombreForm.addEventListener("submit", async (event) => {
         nombreMensaje.textContent = "El nombre tiene que tener al menos 3 letras.";
         return;
     }
-    if(nombre === document.getElementById("nombre-el").textContent){
+    const usuarioActual = await obtenerUsuario();
+    if(nombreReservado(nombre) && !usuarioActual.admin){
+        nombreMensaje.textContent = "Ese nombre está reservado para la Escuela. Elegí otro.";
+        return;
+    }
+    if(nombre === document.getElementById("nombre-el").dataset.nombre){
         nombreDialogo.close();
         return;
     }
@@ -108,8 +133,8 @@ nombreForm.addEventListener("submit", async (event) => {
     boton.disabled = false;
     if(error){
         // 23505: el índice único de nombres (sin distinguir mayúsculas)
-        nombreMensaje.textContent = error.code === "23505"
-            ? "Ese nombre de usuario ya está en uso."
+        nombreMensaje.textContent = error.code === "23505" ? "Ese nombre de usuario ya está en uso."
+            : error.message === "nombre_reservado" ? "Ese nombre está reservado para la Escuela. Elegí otro."
             : "No se pudo cambiar el nombre: " + error.message;
         return;
     }

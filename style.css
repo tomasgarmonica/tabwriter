@@ -801,3 +801,104 @@ dialog .tonos label{
     min-width: 24px;
     text-align: center;
 }
+
+/* Marquitas: profe y sello de revisada */
+.etiqueta{
+    display: inline-block;
+    padding: 1px 8px;
+    border-radius: 1rem;
+    font-size: 12px;
+    font-weight: bold;
+    font-style: normal;
+    vertical-align: middle;
+}
+
+.etiqueta.profe{
+    background-color: #645A78;
+    color: white;
+}
+
+.etiqueta.revisada{
+    background-color: #e3f1e6;
+    color: #2e6b3a;
+}
+
+.sello{
+    display: inline-block;
+    margin-top: 8px;
+    padding: 4px 12px;
+    border-radius: 1rem;
+    background-color: #e3f1e6;
+    color: #2e6b3a;
+    font-weight: bold;
+    font-size: 14px;
+}
+
+/* Video de referencia de YouTube en la página de la tab */
+.video{
+    max-width: 640px;
+    margin: 16px auto 0;
+}
+
+.video iframe{
+    display: block;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    border: 0;
+    border-radius: 0.25rem;
+}
+
+/* Moderación */
+.moderar{
+    margin-top: 20px;
+    padding: 12px;
+    border: 2px dashed #645A78;
+    border-radius: 0.25rem;
+}
+
+.moderar h3{
+    color: #645A78;
+}
+
+.reportar{
+    margin-top: 16px;
+    font-size: 13px;
+}
+
+.pagina .reportar a{
+    color: #777;
+}
+
+.ayuda{
+    margin-bottom: 8px;
+    color: #555;
+    font-size: 14px;
+}
+
+.reporte{
+    padding: 14px 16px;
+    border: 2px solid #645A78;
+    border-radius: 0.25rem;
+}
+
+.pagina a.reporte-tab{
+    font-weight: bold;
+    font-size: 17px;
+}
+
+.reporte-motivo{
+    margin-top: 6px;
+}
+
+.reporte .acciones{
+    justify-content: flex-start;
+}
+
+dialog textarea{
+    padding: 8px 10px;
+    border: 2px solid #645A78;
+    border-radius: 0.25rem;
+    font-family: inherit;
+    font-size: 15px;
+    resize: vertical;
+}

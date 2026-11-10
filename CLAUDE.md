@@ -8,6 +8,7 @@ Comunidad de tablaturas para armónica diatónica de la Escuela de Armónica de 
 - `index.html` + `tabs.js`: portada, lista y búsqueda de tablaturas. `tabs.html` solo redirige a la portada (enlaces viejos).
 - `escribir.html` + `escribir.js`: editor (botones, modo teclado, detector de notas por micrófono, publicar).
 - `tab.html` + `tab.js`: una tab (votos, transponer, copiar/descargar, editar/eliminar propias).
+- `admin.html` + `admin.js`: moderación (reportes). Roles en `perfiles.admin` / `perfiles.profe`, que solo cambia un administrador (desde el sitio: botón en el perfil; o por SQL). En la página de una tab, los administradores ven el sello "Revisada" y pueden eliminar. Los nombres que se parecen a la Escuela están reservados (`nombre_reservado()` en la base y `nombreReservado()` en `comun.js`: mantenerlas iguales).
 - `perfil.html`/`perfil.js`, `entrar.html`/`entrar.js` (login por email; el botón de Google aparece solo si el proveedor está activo en Supabase).
 - `comun.js`: cliente Supabase (`db`, es `null` si no hay configuración o falla el CDN: las páginas deben seguir andando), menú, celdas de la armónica (`CELDAS`), marcas de cambio de armónica y `transponer()`.
 - `config.js`: URL y clave publicable de Supabase (son públicas; la seguridad está en las políticas RLS).

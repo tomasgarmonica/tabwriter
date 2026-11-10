@@ -33,8 +33,11 @@ async function cargarTab(){
     const autor = document.getElementById("autor-el");
     autor.textContent = tab.autor_nombre;
     autor.href = "perfil.html?id=" + tab.autor;
+    if(tab.autor_profe) autor.after(" ", crearEtiqueta("Profe", "profe"));
+    document.getElementById("sello-el").hidden = !tab.revisada;
     contenidoMostrado = tab.contenido;
     document.getElementById("contenido-el").textContent = tab.contenido;
+    mostrarVideo();
     dibujarTransponer();
     mostrarPuntaje();
     mostrarVersiones();
@@ -53,7 +56,77 @@ async function cargarTab(){
         dibujarEstrellas(voto ? voto.puntaje : 0);
         document.getElementById("votar-el").hidden = false;
     }
+    if(usuario && usuario.admin){
+        document.getElementById("moderar-el").hidden = false;
+        dibujarBotonSello();
+    }
+    document.getElementById("reportar-el").hidden = Boolean(usuario && usuario.id === tab.autor);
 }
+
+// Video de referencia de YouTube, dentro de la página (versión sin cookies hasta que se reproduce)
+function mostrarVideo(){
+    const contenedor = document.getElementById("video-el");
+    if(!tab.video){
+        contenedor.hidden = true;
+        return;
+    }
+    const video = document.createElement("iframe");
+    video.src = "https://www.youtube-nocookie.com/embed/" + encodeURIComponent(tab.video);
+    video.title = "Video de referencia: " + tab.titulo;
+    video.allow = "accelerometer; encrypted-media; gyroscope; picture-in-picture; fullscreen";
+    video.referrerPolicy = "strict-origin-when-cross-origin";
+    video.loading = "lazy";
+    contenedor.replaceChildren(video);
+    contenedor.hidden = false;
+}
+
+// Moderación: sello "Revisada por la Escuela" (solo administradores)
+function dibujarBotonSello(){
+    document.getElementById("sello-btn").textContent = tab.revisada ? "Quitar el sello de revisada" : "Marcar como revisada";
+}
+
+async function cambiarSello(){
+    const { data, error } = await db.from("tabs").update({ revisada: !tab.revisada }).eq("id", tabId).select("revisada");
+    if(error || !data.length){
+        mostrarAviso("No se pudo cambiar el sello" + (error ? ": " + error.message : ""));
+        return;
+    }
+    tab.revisada = data[0].revisada;
+    document.getElementById("sello-el").hidden = !tab.revisada;
+    dibujarBotonSello();
+    mostrarAviso(tab.revisada ? "Tab marcada como revisada" : "Sello quitado");
+}
+
+// Reportar la tab: queda para que la vea un administrador en la página de moderación
+const reporteDialogo = document.getElementById("reporte-dialogo");
+const reporteForm = document.getElementById("reporte-form");
+
+document.getElementById("reportar-el").addEventListener("click", async (event) => {
+    event.preventDefault();
+    if(!await obtenerUsuario()){
+        location.href = urlEntrar();
+        return;
+    }
+    reporteForm.reset();
+    reporteDialogo.showModal();
+});
+
+reporteForm.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    const detalle = reporteForm.detalle.value.trim();
+    const motivo = reporteForm.tipo.value + (detalle ? ": " + detalle : "");
+    const boton = document.getElementById("reporte-btn");
+    boton.disabled = true;
+    // Sin .select(): los reportes solo los pueden leer los administradores
+    const { error } = await db.from("reportes").insert({ tab_id: tabId, motivo });
+    boton.disabled = false;
+    reporteDialogo.close();
+    if(error){
+        mostrarAviso(error.code === "23505" ? "Ya reportaste esta tab" : "No se pudo enviar el reporte: " + error.message);
+        return;
+    }
+    mostrarAviso("¡Gracias! La Escuela lo va a revisar");
+});
 
 // Título, descripción y dirección oficial (la página fija), para buscadores y vistas previas
 async function datosParaBuscadores(){
@@ -242,7 +315,7 @@ function abrirEnEditor(editar){
         localStorage.setItem("tabwriter-tab", contenido);
         if(editar){
             localStorage.setItem("armonitabs-editando", JSON.stringify({
-                id: tab.id, autor: tab.autor, titulo: tab.titulo, artista: tab.artista, tonalidades: tab.tonalidades, dificultad: tab.dificultad
+                id: tab.id, autor: tab.autor, titulo: tab.titulo, artista: tab.artista, tonalidades: tab.tonalidades, dificultad: tab.dificultad, video: tab.video
             }));
         } else {
             localStorage.removeItem("armonitabs-editando");
@@ -256,9 +329,9 @@ function abrirEnEditor(editar){
 
 async function eliminar(){
     if(!confirm("¿Eliminar «" + tab.titulo + "»? No se puede deshacer.")) return;
-    const { error } = await db.from("tabs").delete().eq("id", tabId);
-    if(error){
-        mostrarAviso("No se pudo eliminar: " + error.message);
+    const { data, error } = await db.from("tabs").delete().eq("id", tabId).select("id");
+    if(error || !data.length){
+        mostrarAviso("No se pudo eliminar" + (error ? ": " + error.message : ""));
         return;
     }
     location.href = "perfil.html?id=" + tab.autor;

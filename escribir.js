@@ -145,6 +145,24 @@ let temasPublicados = new Map();
 let parecidoRevisado = false;   // ya contestó "¿Es este tema?"
 const parecidoEl = document.getElementById("publicar-parecido");
 
+// Id del video (11 caracteres) de un enlace de YouTube; null si está vacío y undefined si no se reconoce
+function idDeYoutube(enlace){
+    enlace = enlace.trim();
+    if(!enlace) return null;
+    try {
+        const url = new URL(/^https?:\/\//i.test(enlace) ? enlace : "https://" + enlace);
+        let id = null;
+        if(url.hostname === "youtu.be"){
+            id = url.pathname.slice(1);
+        } else if(/(^|\.)youtube(-nocookie)?\.com$/.test(url.hostname)){
+            id = url.searchParams.get("v") || (url.pathname.match(/^\/(shorts|embed|live)\/([^/]+)/) || [])[2];
+        }
+        return /^[A-Za-z0-9_-]{11}$/.test(id || "") ? id : undefined;
+    } catch(error){
+        return undefined;
+    }
+}
+
 // Temas que no son solamente la tab que se está editando
 function otrosTemas(){
     const editando = tabEditando();
@@ -254,6 +272,7 @@ async function abrirPublicar(){
         publicarForm.titulo.value = editando.titulo;
         publicarForm.artista.value = editando.artista || "";
         publicarForm.dificultad.value = editando.dificultad;
+        publicarForm.video.value = editando.video ? "https://youtu.be/" + editando.video : "";
         document.getElementById("publicar-editando").hidden = false;
         document.getElementById("publicar-ttl").textContent = "Guardar cambios";
         document.getElementById("publicar-btn").textContent = "Guardar";
@@ -286,6 +305,11 @@ publicarForm.addEventListener("submit", async (event) => {
         ...armonicasEnContenido(tabEl.value).filter(tonalidad => marcadas.includes(tonalidad)),
         ...marcadas,
     ].filter((tonalidad, i, lista) => lista.indexOf(tonalidad) === i);
+    const video = idDeYoutube(publicarForm.video.value);
+    if(video === undefined){
+        mostrarAviso("Ese enlace no es de un video de YouTube");
+        return;
+    }
     if(tonalidades.length < 1 || tonalidades.length > 4){
         mostrarAviso("Marcá entre 1 y 4 armónicas");
         return;
@@ -317,6 +341,7 @@ publicarForm.addEventListener("submit", async (event) => {
         artista: publicarForm.artista.value.trim() || null,
         tonalidades,
         dificultad: parseInt(publicarForm.dificultad.value),
+        video,
         contenido: tabEl.value,
     };
     const editando = tabEditando();

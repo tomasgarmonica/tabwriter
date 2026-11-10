@@ -24,10 +24,12 @@
                 <span id="datos-el"></span> · por <a id="autor-el"></a>
             </p>
             <p id="puntaje-el" class="puntaje"></p>
+            <p id="sello-el" class="sello" hidden>✓ Revisada por la Escuela de Armónica de Bs As</p>
             <div id="versiones-el" class="versiones-tema" hidden>
                 <label for="versiones-select" id="versiones-ttl"></label>
                 <select id="versiones-select"></select>
             </div>
+            <div id="video-el" class="video" hidden></div>
             <div class="transponer">
                 <h3>¿Tenés otra armónica?</h3>
                 <p>Elegila y la tab se reescribe para tocar las mismas notas.</p>
@@ -51,6 +53,37 @@
                 <button onclick="abrirEnEditor(true)">Editar</button>
                 <button onclick="eliminar()">Eliminar</button>
             </div>
+            <div id="moderar-el" class="moderar" hidden>
+                <h3>Moderación</h3>
+                <div class="acciones">
+                    <button id="sello-btn" onclick="cambiarSello()"></button>
+                    <button onclick="eliminar()">Eliminar la tab</button>
+                </div>
+            </div>
+            <p class="reportar"><a href="#" id="reportar-el" hidden>Reportar esta tab</a></p>
+
+            <dialog id="reporte-dialogo">
+                <form id="reporte-form" method="dialog">
+                    <h2>Reportar tab</h2>
+                    <p>Contanos qué pasa. Lo revisa la Escuela.</p>
+                    <label>Motivo
+                        <select name="tipo">
+                            <option>Infringe derechos de autor</option>
+                            <option>Contenido ofensivo</option>
+                            <option>Spam o no es una tablatura</option>
+                            <option>Está mal o incompleta</option>
+                            <option>Otro</option>
+                        </select>
+                    </label>
+                    <label>Detalle (opcional)
+                        <textarea name="detalle" maxlength="400" rows="3"></textarea>
+                    </label>
+                    <div class="acciones">
+                        <button type="button" onclick="document.getElementById('reporte-dialogo').close()">Cancelar</button>
+                        <button type="submit" class="principal" id="reporte-btn">Enviar</button>
+                    </div>
+                </form>
+            </dialog>
         </article>
         <aside class="clases">
             <div>

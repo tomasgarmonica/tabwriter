@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="icon" href="favicon.ico">
+    <link rel="stylesheet" href="style.css">
+    <title>Moderación · Armonitabs</title>
+    <meta name="robots" content="noindex">
+</head>
+<body>
+    <header>
+        <a href="https://www.instagram.com/escueladearmonicaba/" target="_blank" rel="noopener">
+            <img class="logo" src="img/logo-escuela.png" alt="Escuela de Armónica">
+        </a>
+        <h1>Armonitabs</h1>
+    </header>
+    <nav id="nav-el"></nav>
+    <main class="pagina">
+        <h2>Moderación</h2>
+        <p class="ayuda">Tabs reportadas por los usuarios. Para marcar una tab como revisada o a un usuario como profe, entrá a su página: ahí tenés los botones.</p>
+        <p id="estado-el" class="estado">Cargando...</p>
+        <div id="reportes-el" class="lista"></div>
+    </main>
+    <footer>
+        <p>Una herramienta de la Escuela de Armónica de Buenos Aires</p>
+        <p class="descargo">Armonitabs es una plataforma para compartir tablaturas. Cada tab es responsabilidad de quien la publica; la Escuela de Armónica de Buenos Aires no revisa ni se responsabiliza por el material compartido.</p>
+        <div class="contacto">
+            <a href="https://www.instagram.com/escueladearmonicaba/" target="_blank" rel="noopener">Instagram: @escueladearmonicaba</a>
+            <a href="https://wa.me/5491130703928" target="_blank" rel="noopener">WhatsApp: +54 9 11 3070-3928</a>
+            <a href="privacidad.html">Privacidad y condiciones</a>
+        </div>
+    </footer>
+    <div id="aviso-el" class="aviso"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.119.0/dist/umd/supabase.min.js" integrity="sha384-gnyZit14c5lnGcarmA166QQjjJXpucw25ogZXuwH3HxxY904zHkBqmxVpelsPorb" crossorigin="anonymous"></script>
+    <script src="config.js"></script>
+    <script src="comun.js"></script>
+    <script src="admin.js"></script>
+</body>
+</html>

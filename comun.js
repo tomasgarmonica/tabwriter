@@ -126,10 +126,12 @@ function obtenerUsuario(){
             const { data } = await db.auth.getSession();
             if(!data.session) return null;
             const { id, app_metadata, user_metadata } = data.session.user;
-            const { data: perfil } = await db.from("perfiles").select("nombre").eq("id", id).single();
+            const { data: perfil } = await db.from("perfiles").select("nombre, admin, profe").eq("id", id).single();
             return {
                 id,
                 nombre: perfil ? perfil.nombre : "",
+                admin: Boolean(perfil && perfil.admin),
+                profe: Boolean(perfil && perfil.profe),
                 // Quien se registró con Google recibe el nombre de su cuenta: se le ofrece elegir otro una vez
                 debeElegirNombre: app_metadata.provider === "google" && !user_metadata.nombre_elegido,
             };
@@ -173,6 +175,11 @@ async function dibujarNav(){
         }
         const salir = crearEnlace("Salir", "#");
         salir.addEventListener("click", (event) => { event.preventDefault(); cerrarSesion(); });
+        if(usuario.admin){
+            const moderacion = crearEnlace("Moderación", "admin.html");
+            if(pagina === "admin.html") moderacion.classList.add("actual");
+            nav.append(moderacion);
+        }
         nav.append(perfil, salir);
     } else {
         nav.append(crearEnlace("Entrar", urlEntrar()));
@@ -194,6 +201,21 @@ function estrellas(promedio){
 function normalizarTexto(texto){
     return (texto || "").normalize("NFD").replace(/[̀-ͯ]/g, "")
         .toLowerCase().replace(/[^a-z0-9ñ]+/g, " ").trim();
+}
+
+// Nombres de usuario que se confunden con la Escuela o con el sitio (igual que nombre_reservado() en la base)
+function nombreReservado(nombre){
+    const n = normalizarTexto(nombre).replace(/ /g, "");
+    return (n.includes("escuela") && n.includes("armonica")) || n.includes("armonitabs")
+        || /^(admin|administrador|moderador|moderacion|soporte|staff)/.test(n);
+}
+
+// Marquitas junto al nombre del autor y en las tabs con el sello de la Escuela
+function crearEtiqueta(texto, clase){
+    const etiqueta = document.createElement("span");
+    etiqueta.className = "etiqueta " + clase;
+    etiqueta.textContent = texto;
+    return etiqueta;
 }
 
 function claveTema(titulo, artista){
@@ -265,6 +287,8 @@ function crearTarjetaTab(tab, versiones){
     const datos = document.createElement("p");
     datos.className = "datos";
     datos.textContent = nombreArmonicas(tab.tonalidades) + " · " + DIFICULTADES[tab.dificultad] + " · por " + tab.autor_nombre;
+    if(tab.autor_profe) datos.append(" ", crearEtiqueta("Profe", "profe"));
+    if(tab.revisada) titulo.append(" ", crearEtiqueta("✓ Revisada por la Escuela", "revisada"));
     const puntaje = document.createElement("p");
     puntaje.className = "puntaje";
     puntaje.textContent = tab.cantidad_votos
