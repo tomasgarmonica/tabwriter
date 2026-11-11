@@ -313,8 +313,11 @@ async function mostrarArtista(){
 // El mensaje de WhatsApp dice de qué tab viene la consulta
 function enlaceWhatsapp(){
     const tema = tab.titulo + (tab.artista ? " - " + tab.artista : "");
-    document.querySelector(".clases a.boton").href = "https://wa.me/5491130703928?text=" +
+    const boton = document.querySelector(".clases a.boton");
+    boton.href = "https://wa.me/5491130703928?text=" +
         encodeURIComponent("¡Hola! Vengo de Armonitabs (tab: " + tema + ") y quiero info sobre las clases");
+    // En GoatCounter se cuenta desde qué tab se consultó
+    boton.dataset.goatcounterClick = "whatsapp-clases: " + tema;
 }
 
 // Modo práctica: tamaño de letra (se recuerda) y avance automático
