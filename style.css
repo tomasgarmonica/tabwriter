@@ -51,6 +51,12 @@ header h1{
     font-size: 50px;
 }
 
+/* El título lleva a la portada sin cambiar de aspecto */
+header h1 a{
+    color: inherit;
+    text-decoration: inherit;
+}
+
 .armonica{
     display: grid;
     grid-template-columns: repeat(10,1fr);
