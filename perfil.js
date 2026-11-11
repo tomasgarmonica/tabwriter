@@ -47,6 +47,33 @@ async function cargarPerfil(){
             : "Todavía no publicó tablaturas.";
     }
     document.getElementById("lista-el").replaceChildren(...data.map(tab => crearTarjetaTab(tab)));
+    if(propio) mostrarGuardadas(usuario);
+}
+
+// Tabs guardadas: solo en el perfil propio (la base no deja ver las de otros)
+async function mostrarGuardadas(usuario){
+    document.getElementById("guardadas-el").hidden = false;
+    document.getElementById("publicadas-ttl").hidden = false;
+    const estado = document.getElementById("guardadas-estado");
+    const { data: guardadas, error } = await db.from("favoritos").select("tab_id")
+        .eq("usuario", usuario.id).order("creado", { ascending: false });
+    if(error){
+        estado.textContent = "No se pudieron cargar tus guardadas: " + error.message;
+        return;
+    }
+    if(!guardadas.length){
+        estado.textContent = "Todavía no guardaste tabs. Tocá «☆ Guardar» en cualquier tab y la vas a tener acá.";
+        return;
+    }
+    const ids = guardadas.map(guardada => guardada.tab_id);
+    const { data: tabs } = await db.from("tabs_resumen")
+        .select("id, titulo, artista, tonalidades, dificultad, autor_nombre, autor_profe, revisada, promedio, cantidad_votos")
+        .in("id", ids);
+    // En el orden en que se guardaron (la última primero)
+    const porId = new Map((tabs || []).map(tab => [tab.id, tab]));
+    const lista = ids.map(id => porId.get(id)).filter(Boolean);
+    estado.textContent = lista.length === 1 ? "1 tab guardada" : lista.length + " tabs guardadas";
+    document.getElementById("guardadas-lista").replaceChildren(...lista.map(tab => crearTarjetaTab(tab)));
 }
 
 // Administradores: marcar o desmarcar a un usuario como profe

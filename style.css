@@ -1042,3 +1042,25 @@ nav button.tema{
 .pagina .artistas a{
     font-weight: bold;
 }
+
+/* Botón para guardar una tab en el perfil */
+button.guardar{
+    width: auto;
+    margin-top: 8px;
+    padding: 0 16px;
+}
+
+/* Secciones del perfil propio: guardadas y publicadas */
+.seccion-perfil{
+    margin-top: 24px;
+}
+
+h3.seccion-perfil,
+.seccion-perfil h3{
+    color: var(--acento);
+    margin-bottom: 4px;
+}
+
+#profe-el{
+    margin-left: 14px;
+}

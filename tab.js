@@ -57,6 +57,11 @@ async function cargarTab(){
         dibujarEstrellas(voto ? voto.puntaje : 0);
         document.getElementById("votar-el").hidden = false;
     }
+    if(usuario){
+        const { data: guardada } = await db.from("favoritos").select("tab_id")
+            .eq("tab_id", tabId).eq("usuario", usuario.id).maybeSingle();
+        dibujarGuardar(Boolean(guardada));
+    }
     if(usuario && usuario.admin){
         document.getElementById("moderar-el").hidden = false;
         dibujarBotonSello();
@@ -80,6 +85,36 @@ function mostrarVideo(){
     contenedor.replaceChildren(video);
     contenedor.hidden = false;
 }
+
+// Tabs guardadas: aparecen en el perfil propio (solo las ve quien las guardó)
+const guardarBtn = document.getElementById("guardar-btn");
+let guardada = false;
+
+function dibujarGuardar(estado){
+    guardada = estado;
+    guardarBtn.textContent = guardada ? "★ Guardada" : "☆ Guardar";
+    guardarBtn.classList.toggle("activo", guardada);
+    guardarBtn.setAttribute("aria-pressed", guardada);
+}
+
+guardarBtn.addEventListener("click", async () => {
+    const usuario = await obtenerUsuario();
+    if(!usuario){
+        location.href = urlEntrar();
+        return;
+    }
+    guardarBtn.disabled = true;
+    const { error } = guardada
+        ? await db.from("favoritos").delete().eq("tab_id", tabId).eq("usuario", usuario.id)
+        : await db.from("favoritos").insert({ tab_id: tabId });
+    guardarBtn.disabled = false;
+    if(error && error.code !== "23505"){
+        mostrarAviso("No se pudo guardar: " + error.message);
+        return;
+    }
+    dibujarGuardar(!guardada);
+    mostrarAviso(guardada ? "Guardada en tu perfil" : "Ya no está en tus guardadas");
+});
 
 // Moderación: sello "Revisada por la Escuela" (solo administradores)
 function dibujarBotonSello(){
