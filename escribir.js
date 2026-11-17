@@ -113,8 +113,8 @@ function descargar(){
     descargarTexto(tabEl.value, tabEl.value.split("\n")[0].trim() || "tablatura");
 }
 
-function limpiar(){
-    if(tabEl.value === "" || !confirm("¿Borrar toda la tablatura?")) return;
+async function limpiar(){
+    if(tabEl.value === "" || !await preguntar("¿Borrar toda la tablatura?", { aceptar: "Borrar" })) return;
     tabEl.value = "";
     guardar();
     dejarDeEditar();
@@ -240,7 +240,7 @@ async function abrirPublicar(){
     }
     const usuario = await obtenerUsuario();
     if(!usuario){
-        if(confirm("Para publicar tenés que entrar con tu cuenta. ¿Ir a entrar? (La tab queda guardada)")){
+        if(await preguntar("Para publicar tenés que entrar con tu cuenta. ¿Ir a entrar? (La tab queda guardada)", { aceptar: "Entrar" })){
             location.href = urlEntrar();
         }
         return;
@@ -394,8 +394,8 @@ const teclas = {
 };
 
 window.addEventListener('keydown', (event) => {
-    // Con el formulario de publicar abierto, el teclado escribe normalmente
-    if(publicarEl.open) return;
+    // Con un cuadro abierto (publicar, preguntas) el teclado funciona normalmente
+    if(document.querySelector("dialog[open]")) return;
     if(event.code === "Escape"){
         event.preventDefault();
         toggleModoTeclado();
@@ -482,7 +482,7 @@ async function toggleMicrofono(){
             audio: { echoCancellation: false, noiseSuppression: false, autoGainControl: false }
         });
     } catch(error){
-        alert("No se pudo acceder al micrófono: " + error.message);
+        preguntar("No se pudo acceder al micrófono: " + error.message, { aceptar: "Entendido", cancelar: null });
         return;
     }
     audioCtx = new AudioContext();

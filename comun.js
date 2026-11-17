@@ -346,6 +346,50 @@ function descargarTexto(texto, nombre){
     URL.revokeObjectURL(enlace.href);
 }
 
+// Reemplazo de confirm() y alert() con el estilo del sitio. Devuelve una promesa: true si se tocó "aceptar".
+// Sin "cancelar" muestra un solo botón (como alert). Escape o tocar afuera cuentan como cancelar.
+function preguntar(mensaje, { aceptar = "Aceptar", cancelar = "Cancelar" } = {}){
+    return new Promise(resolver => {
+        const dialogo = document.createElement("dialog");
+        dialogo.setAttribute("closedby", "any");
+        const formulario = document.createElement("form");
+        formulario.method = "dialog";
+        const texto = document.createElement("p");
+        texto.className = "pregunta";
+        texto.textContent = mensaje;
+        const acciones = document.createElement("div");
+        acciones.className = "acciones";
+        if(cancelar){
+            const botonCancelar = document.createElement("button");
+            botonCancelar.value = "no";
+            botonCancelar.textContent = cancelar;
+            acciones.append(botonCancelar);
+        }
+        const botonAceptar = document.createElement("button");
+        botonAceptar.value = "si";
+        botonAceptar.className = "principal";
+        botonAceptar.textContent = aceptar;
+        botonAceptar.autofocus = true;
+        acciones.append(botonAceptar);
+        formulario.append(texto, acciones);
+        dialogo.append(formulario);
+        // Tocar el fondo cierra (navegadores sin closedby="any"). Se miran las coordenadas porque
+        // el relleno del cuadro también cuenta como el propio <dialog>
+        dialogo.addEventListener("click", evento => {
+            const caja = dialogo.getBoundingClientRect();
+            const afuera = evento.clientX < caja.left || evento.clientX > caja.right
+                || evento.clientY < caja.top || evento.clientY > caja.bottom;
+            if(evento.target === dialogo && afuera) dialogo.close();
+        });
+        dialogo.addEventListener("close", () => {
+            dialogo.remove();
+            resolver(dialogo.returnValue === "si");
+        });
+        document.body.append(dialogo);
+        dialogo.showModal();
+    });
+}
+
 function mostrarAviso(mensaje){
     const aviso = document.getElementById("aviso-el");
     aviso.textContent = mensaje;

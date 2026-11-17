@@ -421,12 +421,12 @@ function descargar(){
 
 // Lleva la tab al editor (transpuesta, si se eligió otra armónica).
 // Con "Editar" se lleva la original y al publicar se actualiza esta misma tab.
-function abrirEnEditor(editar){
+async function abrirEnEditor(editar){
     const contenido = editar ? tab.contenido : contenidoMostrado;
     let actual = "";
     try { actual = localStorage.getItem("tabwriter-tab") || ""; } catch(error){}
     if(actual.trim() && actual !== contenido
-        && !confirm("En el editor hay otra tab sin publicar. ¿Reemplazarla por esta?")) return;
+        && !await preguntar("En el editor hay otra tab sin publicar. ¿Reemplazarla por esta?", { aceptar: "Reemplazar" })) return;
     try {
         localStorage.setItem("tabwriter-tab", contenido);
         if(editar){
@@ -444,7 +444,7 @@ function abrirEnEditor(editar){
 }
 
 async function eliminar(){
-    if(!confirm("¿Eliminar «" + tab.titulo + "»? No se puede deshacer.")) return;
+    if(!await preguntar("¿Eliminar «" + tab.titulo + "»? No se puede deshacer.", { aceptar: "Eliminar" })) return;
     const { data, error } = await db.from("tabs").delete().eq("id", tabId).select("id");
     if(error || !data.length){
         mostrarAviso("No se pudo eliminar" + (error ? ": " + error.message : ""));

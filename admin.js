@@ -72,7 +72,7 @@ async function descartarReporte(reporte){
 
 // Al borrar la tab se borran también sus votos y reportes
 async function eliminarTab(reporte){
-    if(!confirm("¿Eliminar «" + reporte.tabs.titulo + "»? No se puede deshacer.")) return;
+    if(!await preguntar("¿Eliminar «" + reporte.tabs.titulo + "»? No se puede deshacer.", { aceptar: "Eliminar" })) return;
     const { data, error } = await db.from("tabs").delete().eq("id", reporte.tab_id).select("id");
     if(error || !data.length){
         mostrarAviso("No se pudo eliminar" + (error ? ": " + error.message : ""));

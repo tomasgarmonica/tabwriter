@@ -4,6 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="icon" href="favicon.ico">
+    <link rel="manifest" href="manifest.webmanifest">
+    <link rel="apple-touch-icon" href="img/icono-192.png">
+    <meta name="theme-color" content="#645A78">
     <link rel="stylesheet" href="style.css">
     <script>try{if((localStorage.getItem("tabwriter-tema")||(matchMedia("(prefers-color-scheme: dark)").matches?"oscuro":"claro"))==="oscuro")document.documentElement.classList.add("oscuro")}catch(e){}</script>
     <title>Armonitabs · Tablaturas para armónica diatónica</title>
@@ -65,12 +68,19 @@
             <a href="privacidad.html">Privacidad y condiciones</a>
         </div>
     </footer>
-    <div id="aviso-el" class="aviso"></div>
+    <div id="aviso-el" class="aviso" role="status"></div>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.119.0/dist/umd/supabase.min.js" integrity="sha384-gnyZit14c5lnGcarmA166QQjjJXpucw25ogZXuwH3HxxY904zHkBqmxVpelsPorb" crossorigin="anonymous"></script>
     <script src="config.js"></script>
     <script src="comun.js"></script>
     <script data-goatcounter="https://armonitabs.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
     <script src="tabs.js"></script>
+    <!-- Precarga la tab cuando el usuario apoya el mouse o empieza a tocarla. Solo "prefetch" (baja el HTML sin
+         ejecutar nada): "prerender" correría GoatCounter y contaría visitas que nadie vio -->
+    <script type="speculationrules">
+    {
+        "prefetch": [{ "where": { "selector_matches": "a.tarjeta" }, "eagerness": "moderate" }]
+    }
+    </script>
 </body>
 </html>

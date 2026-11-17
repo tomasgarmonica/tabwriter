@@ -23,6 +23,13 @@ html.oscuro{
     color-scheme: dark;
 }
 
+/* Fundido suave al pasar de una página a otra (navegadores que no lo soportan cambian de página como siempre) */
+@media (prefers-reduced-motion: no-preference){
+    @view-transition{
+        navigation: auto;
+    }
+}
+
 [hidden]{
     display: none !important;
 }
@@ -669,6 +676,8 @@ dialog select,
 dialog{
     /* El reset de "*" le saca el margen automático que lo centra */
     margin: auto;
+    /* El ancho incluye relleno y borde: si no, en el celular el cuadro se pasa del borde de la pantalla */
+    box-sizing: border-box;
     width: min(420px, 90vw);
     padding: 24px;
     border: 2px solid var(--acento);
@@ -697,6 +706,12 @@ dialog label,
 dialog p{
     margin-bottom: 12px;
     font-size: 14px;
+}
+
+/* Pregunta de preguntar() (reemplaza a confirm/alert) */
+dialog p.pregunta{
+    margin-bottom: 16px;
+    font-size: 16px;
 }
 
 dialog .acciones > button{
