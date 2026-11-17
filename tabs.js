@@ -13,7 +13,7 @@ const parametros = new URLSearchParams(location.search);
 buscarForm.texto.value = parametros.get("texto") || "";
 buscarForm.tonalidad.value = parametros.get("tonalidad") || "";
 buscarForm.dificultad.value = parametros.get("dificultad") || "";
-buscarForm.orden.value = parametros.get("orden") || "puntaje";
+buscarForm.orden.value = parametros.get("orden") || "alfabetico";
 
 buscarForm.addEventListener("submit", (event) => {
     event.preventDefault();
@@ -21,7 +21,7 @@ buscarForm.addEventListener("submit", (event) => {
     if(buscarForm.texto.value.trim()) nuevos.set("texto", buscarForm.texto.value.trim());
     if(buscarForm.tonalidad.value) nuevos.set("tonalidad", buscarForm.tonalidad.value);
     if(buscarForm.dificultad.value) nuevos.set("dificultad", buscarForm.dificultad.value);
-    if(buscarForm.orden.value !== "puntaje") nuevos.set("orden", buscarForm.orden.value);
+    if(buscarForm.orden.value !== "alfabetico") nuevos.set("orden", buscarForm.orden.value);
     history.replaceState(null, "", "?" + nuevos);
     buscar();
 });
@@ -37,14 +37,20 @@ let vistos = new Set();
 
 function armarConsulta(){
     let consulta = db.from("tabs_resumen")
-        .select("id, titulo, artista, tonalidades, dificultad, autor_nombre, autor_profe, revisada, promedio, cantidad_votos");
+        .select("id, titulo, artista, tonalidades, dificultad, autor_nombre, autor_profe, revisada, video, promedio, cantidad_votos");
     // Se busca en título y artista sin tildes ni signos (columna busqueda); cada palabra tiene que aparecer
     for(const palabra of normalizarTexto(buscarForm.texto.value).split(" ").filter(Boolean)){
         consulta = consulta.ilike("busqueda", `%${palabra}%`);
     }
     if(buscarForm.tonalidad.value) consulta = consulta.contains("tonalidades", [buscarForm.tonalidad.value]);
     if(buscarForm.dificultad.value) consulta = consulta.eq("dificultad", parseInt(buscarForm.dificultad.value));
-    if(buscarForm.orden.value === "nuevas"){
+    if(buscarForm.orden.value === "alfabetico"){
+        // Por título sin tildes ni mayúsculas (busqueda = título + artista normalizados);
+        // entre versiones del mismo tema va primero la mejor votada, que es la que muestra la tarjeta
+        consulta = consulta.order("busqueda")
+            .order("promedio", { ascending: false, nullsFirst: false })
+            .order("cantidad_votos", { ascending: false });
+    } else if(buscarForm.orden.value === "nuevas"){
         consulta = consulta.order("creada", { ascending: false });
     } else {
         consulta = consulta.order("promedio", { ascending: false })

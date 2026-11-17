@@ -328,6 +328,11 @@ function aplicarTransposicion(){
     contenidoMostrado = transponer(tab.contenido, tab.tonalidades, reemplazos, celdaG4(), octavas);
     document.getElementById("contenido-el").textContent = contenidoMostrado;
     document.getElementById("fuera-de-registro-el").hidden = !/(^|\s)\?(\s|$)/.test(contenidoMostrado);
+    // Con el desplegable cerrado, que se note que la tab no está en la armónica original
+    const cambiada = Object.entries(transposicion).some(([tonalidad, { select, octava }]) => select.value !== tonalidad || octava !== 0);
+    document.getElementById("transpuesta-el").textContent = cambiada
+        ? "· en " + Object.values(transposicion).map(({ select }) => select.value).join(", ")
+        : "";
 }
 
 // El artista lleva a su página (la arma el generador cada hora); si todavía no existe, a la búsqueda

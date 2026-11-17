@@ -29,7 +29,7 @@ async function cargarPerfil(){
     if(usuario && usuario.admin) mostrarBotonProfe(perfilId, perfil.profe);
 
     const { data, error } = await db.from("tabs_resumen")
-        .select("id, titulo, artista, tonalidades, dificultad, autor_nombre, autor_profe, revisada, promedio, cantidad_votos")
+        .select("id, titulo, artista, tonalidades, dificultad, autor_nombre, autor_profe, revisada, video, promedio, cantidad_votos")
         .eq("autor", perfilId)
         .order("creada", { ascending: false });
     if(error){
@@ -67,7 +67,7 @@ async function mostrarGuardadas(usuario){
     }
     const ids = guardadas.map(guardada => guardada.tab_id);
     const { data: tabs } = await db.from("tabs_resumen")
-        .select("id, titulo, artista, tonalidades, dificultad, autor_nombre, autor_profe, revisada, promedio, cantidad_votos")
+        .select("id, titulo, artista, tonalidades, dificultad, autor_nombre, autor_profe, revisada, video, promedio, cantidad_votos")
         .in("id", ids);
     // En el orden en que se guardaron (la última primero)
     const porId = new Map((tabs || []).map(tab => [tab.id, tab]));

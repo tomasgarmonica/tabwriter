@@ -22,7 +22,7 @@ function escapar(texto){
 }
 
 async function leerTabs(){
-    const campos = "id,titulo,artista,tonalidades,dificultad,contenido,autor,autor_nombre,actualizada,promedio,cantidad_votos";
+    const campos = "id,titulo,artista,tonalidades,dificultad,contenido,video,autor,autor_nombre,actualizada,promedio,cantidad_votos";
     const tabs = [];
     for(let desde = 0; ; desde += 1000){
         const respuesta = await fetch(`${SUPABASE_URL}/rest/v1/tabs_resumen?select=${campos}&order=id&offset=${desde}&limit=1000`,
@@ -106,7 +106,7 @@ function paginaDeArtista(base, artista){
     const tarjetas = artista.tabs
         .slice().sort((a, b) => a.titulo.localeCompare(b.titulo, "es") || b.promedio - a.promedio)
         .map(tab => `            <a class="tarjeta" href="${urlPaginaTab(tab)}">
-                <h3>${escapar(tab.titulo)}</h3>
+                <h3>${escapar(tab.titulo)}${tab.video ? ' <span class="etiqueta con-video">▶ Video</span>' : ""}</h3>
                 <p class="datos">${escapar(nombreArmonicas(tab.tonalidades) + " · " + DIFICULTADES[tab.dificultad] + " · por " + tab.autor_nombre)}</p>
             </a>`).join("\n");
     return paginaSimple(base, {

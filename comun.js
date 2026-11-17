@@ -321,6 +321,7 @@ function crearTarjetaTab(tab, versiones){
     datos.textContent = nombreArmonicas(tab.tonalidades) + " · " + DIFICULTADES[tab.dificultad] + " · por " + tab.autor_nombre;
     if(tab.autor_profe) datos.append(" ", crearEtiqueta("Profe", "profe"));
     if(tab.revisada) titulo.append(" ", crearEtiqueta("✓ Revisada por la Escuela", "revisada"));
+    if(tab.video) titulo.append(" ", crearEtiqueta("▶ Video", "con-video"));
     const puntaje = document.createElement("p");
     puntaje.className = "puntaje";
     puntaje.textContent = tab.cantidad_votos

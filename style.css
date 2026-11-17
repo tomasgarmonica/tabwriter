@@ -791,8 +791,15 @@ dialog .tonos label{
     background-color: var(--suave);
 }
 
-.transponer h3{
+.transponer summary{
+    font-size: 1.17em;
+    font-weight: bold;
     color: var(--acento);
+    cursor: pointer;
+}
+
+.transponer .transpuesta{
+    font-size: 14px;
 }
 
 .transponer p{
@@ -869,6 +876,12 @@ dialog .tonos label{
 .etiqueta.revisada{
     background-color: var(--verde-fondo);
     color: var(--verde-texto);
+}
+
+.etiqueta.con-video{
+    background-color: var(--suave);
+    color: var(--acento);
+    border: 1px solid var(--acento);
 }
 
 .sello{

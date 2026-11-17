@@ -34,13 +34,12 @@
                 <label for="versiones-select" id="versiones-ttl"></label>
                 <select id="versiones-select"></select>
             </div>
-            <div id="video-el" class="video" hidden></div>
-            <div class="transponer">
-                <h3>¿Tenés otra armónica?</h3>
+            <details class="transponer">
+                <summary>¿Tenés otra armónica? <span id="transpuesta-el" class="transpuesta"></span></summary>
                 <p>Elegila y la tab se reescribe para tocar las mismas notas.</p>
                 <div id="transponer-el" class="transponer-filas"></div>
                 <p id="fuera-de-registro-el" class="estado" hidden>Las notas marcadas con ? no entran en esa armónica.</p>
-            </div>
+            </details>
             <div class="practica">
                 <span class="practica-grupo">
                     Letra
@@ -57,6 +56,7 @@
                 </span>
             </div>
             <pre id="contenido-el" class="contenido"></pre>
+            <div id="video-el" class="video" hidden></div>
 
             <div id="votar-el" class="votar" hidden>
                 <span>Tu puntaje:</span>
