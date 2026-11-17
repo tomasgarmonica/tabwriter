@@ -8,6 +8,8 @@ let tBtn = document.getElementById("t-btn");
 let tecladoBtn = document.getElementById("teclado-btn");
 let micBtn = document.getElementById("mic-btn");
 let deteccionEl = document.getElementById("deteccion-el");
+// Sensibilidad y estabilidad solo se muestran con el micrófono prendido
+let ajustesMicEl = document.getElementById("ajustes-mic-el");
 let g4Btn = document.getElementById("g4-btn");
 
 //Guardado automático en el navegador
@@ -494,6 +496,7 @@ async function toggleMicrofono(){
     ultimaEscrita = null;
     micBtn.innerText = "Micrófono: on";
     micBtn.classList.add("activo");
+    ajustesMicEl.hidden = false;
     requestAnimationFrame(analizarAudio);
 }
 
@@ -503,6 +506,7 @@ function detenerMicrofono(){
     audioCtx = null;
     micBtn.innerText = "Micrófono: off";
     micBtn.classList.remove("activo");
+    ajustesMicEl.hidden = true;
     deteccionEl.textContent = "-";
     marcarCelda(null);
 }
