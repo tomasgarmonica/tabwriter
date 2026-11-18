@@ -160,22 +160,44 @@ let temasPublicados = new Map();
 let parecidoRevisado = false;   // ya contestó "¿Es este tema?"
 const parecidoEl = document.getElementById("publicar-parecido");
 
-// Id del video (11 caracteres) de un enlace de YouTube; null si está vacío y undefined si no se reconoce
-function idDeYoutube(enlace){
+// Video a guardar desde un enlace: id de YouTube (11 caracteres), "instagram:CÓDIGO" o "tiktok:NÚMERO".
+// null si está vacío, "tiktok-corto" si es un enlace corto de TikTok y undefined si no se reconoce
+function videoDeEnlace(enlace){
     enlace = enlace.trim();
     if(!enlace) return null;
     try {
         const url = new URL(/^https?:\/\//i.test(enlace) ? enlace : "https://" + enlace);
-        let id = null;
-        if(url.hostname === "youtu.be"){
-            id = url.pathname.slice(1);
-        } else if(/(^|\.)youtube(-nocookie)?\.com$/.test(url.hostname)){
-            id = url.searchParams.get("v") || (url.pathname.match(/^\/(shorts|embed|live)\/([^/]+)/) || [])[2];
+        const sitio = url.hostname.replace(/^(www|m)\./, "");
+        if(sitio === "youtu.be" || /^youtube(-nocookie)?\.com$/.test(sitio)){
+            const id = sitio === "youtu.be" ? url.pathname.slice(1)
+                : url.searchParams.get("v") || (url.pathname.match(/^\/(shorts|embed|live)\/([^/]+)/) || [])[2];
+            return /^[A-Za-z0-9_-]{11}$/.test(id || "") ? id : undefined;
         }
-        return /^[A-Za-z0-9_-]{11}$/.test(id || "") ? id : undefined;
+        if(sitio === "instagram.com"){
+            // instagram.com/reel/CÓDIGO, /p/CÓDIGO, /tv/CÓDIGO o /usuario/reel/CÓDIGO
+            const codigo = (url.pathname.match(/\/(p|reels?|tv)\/([A-Za-z0-9_-]{5,60})(\/|$)/) || [])[2];
+            return codigo ? "instagram:" + codigo : undefined;
+        }
+        if(sitio === "vm.tiktok.com" || sitio === "vt.tiktok.com" || (sitio === "tiktok.com" && /^\/t\//.test(url.pathname))){
+            return "tiktok-corto";
+        }
+        if(sitio === "tiktok.com"){
+            // tiktok.com/@usuario/video/NÚMERO, /embed/v2/NÚMERO, /player/v1/NÚMERO o /v/NÚMERO.html
+            const numero = (url.pathname.match(/\/(video|v2|v1|v)\/([0-9]{10,25})(\.html)?(\/|$)/) || [])[2];
+            return numero ? "tiktok:" + numero : undefined;
+        }
+        return undefined;
     } catch(error){
         return undefined;
     }
+}
+
+// Enlace para mostrar en el formulario al editar una tab con video
+function enlaceDeVideo(video){
+    if(!video) return "";
+    if(video.startsWith("instagram:")) return "https://www.instagram.com/reel/" + video.slice(10) + "/";
+    if(video.startsWith("tiktok:")) return "https://www.tiktok.com/@/video/" + video.slice(7);
+    return "https://youtu.be/" + video;
 }
 
 // Temas que no son solamente la tab que se está editando
@@ -287,7 +309,7 @@ async function abrirPublicar(){
         publicarForm.titulo.value = editando.titulo;
         publicarForm.artista.value = editando.artista || "";
         publicarForm.dificultad.value = editando.dificultad;
-        publicarForm.video.value = editando.video ? "https://youtu.be/" + editando.video : "";
+        publicarForm.video.value = enlaceDeVideo(editando.video);
         document.getElementById("publicar-editando").hidden = false;
         document.getElementById("publicar-ttl").textContent = "Guardar cambios";
         document.getElementById("publicar-btn").textContent = "Guardar";
@@ -320,9 +342,13 @@ publicarForm.addEventListener("submit", async (event) => {
         ...armonicasEnContenido(tabEl.value).filter(tonalidad => marcadas.includes(tonalidad)),
         ...marcadas,
     ].filter((tonalidad, i, lista) => lista.indexOf(tonalidad) === i);
-    const video = idDeYoutube(publicarForm.video.value);
+    const video = videoDeEnlace(publicarForm.video.value);
+    if(video === "tiktok-corto"){
+        mostrarAviso("Ese es un enlace corto de TikTok: abrilo en el navegador y copiá la dirección completa (tiktok.com/@usuario/video/...)");
+        return;
+    }
     if(video === undefined){
-        mostrarAviso("Ese enlace no es de un video de YouTube");
+        mostrarAviso("Ese enlace no es de un video de YouTube, Instagram o TikTok");
         return;
     }
     if(tonalidades.length < 1 || tonalidades.length > 4){

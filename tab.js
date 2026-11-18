@@ -69,7 +69,7 @@ async function cargarTab(){
     document.getElementById("reportar-el").hidden = Boolean(usuario && usuario.id === tab.autor);
 }
 
-// Video de referencia de YouTube, dentro de la página (versión sin cookies hasta que se reproduce)
+// Video dentro de la página: YouTube (versión sin cookies hasta que se reproduce), Instagram o TikTok (verticales)
 function mostrarVideo(){
     const contenedor = document.getElementById("video-el");
     if(!tab.video){
@@ -77,8 +77,17 @@ function mostrarVideo(){
         return;
     }
     const video = document.createElement("iframe");
-    video.src = "https://www.youtube-nocookie.com/embed/" + encodeURIComponent(tab.video);
-    video.title = "Video de referencia: " + tab.titulo;
+    contenedor.classList.remove("instagram", "tiktok");
+    if(tab.video.startsWith("instagram:")){
+        video.src = "https://www.instagram.com/reel/" + encodeURIComponent(tab.video.slice(10)) + "/embed/";
+        contenedor.classList.add("instagram");
+    } else if(tab.video.startsWith("tiktok:")){
+        video.src = "https://www.tiktok.com/player/v1/" + encodeURIComponent(tab.video.slice(7));
+        contenedor.classList.add("tiktok");
+    } else {
+        video.src = "https://www.youtube-nocookie.com/embed/" + encodeURIComponent(tab.video);
+    }
+    video.title = "Video: " + tab.titulo;
     video.allow = "accelerometer; encrypted-media; gyroscope; picture-in-picture; fullscreen";
     video.referrerPolicy = "strict-origin-when-cross-origin";
     video.loading = "lazy";

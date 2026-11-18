@@ -901,7 +901,7 @@ dialog .tonos label{
     font-size: 14px;
 }
 
-/* Video de referencia de YouTube en la página de la tab */
+/* Video en la página de la tab: YouTube apaisado, Instagram y TikTok verticales */
 .video{
     max-width: 640px;
     margin: 16px auto 0;
@@ -913,6 +913,22 @@ dialog .tonos label{
     aspect-ratio: 16 / 9;
     border: 0;
     border-radius: 0.25rem;
+}
+
+.video.instagram,
+.video.tiktok{
+    max-width: 360px;
+}
+
+.video.tiktok iframe{
+    aspect-ratio: 9 / 16;
+}
+
+/* El reproductor de Instagram suma encabezado y pie arriba y abajo del video */
+.video.instagram iframe{
+    aspect-ratio: auto;
+    height: 640px;
+    background-color: white;
 }
 
 /* Moderación */

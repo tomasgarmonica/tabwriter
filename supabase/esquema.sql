@@ -34,7 +34,7 @@ language sql stable security definer set search_path = '' as $$
     select coalesce((select admin from public.perfiles where id = auth.uid()), false)
 $$;
 
--- Tablaturas. video: id de YouTube; revisada: sello de la Escuela; busqueda: título y artista normalizados.
+-- Tablaturas. video: id de YouTube, 'instagram:CÓDIGO' o 'tiktok:NÚMERO'; revisada: sello de la Escuela; busqueda: título y artista normalizados.
 create table public.tabs (
     id bigint generated always as identity primary key,
     autor uuid not null default auth.uid() references public.perfiles on delete cascade,
@@ -48,7 +48,9 @@ create table public.tabs (
     contenido text not null check (char_length(contenido) between 1 and 20000),
     creada timestamptz not null default now(),
     actualizada timestamptz not null default now(),
-    video text check (video ~ '^[A-Za-z0-9_-]{11}$'),
+    video text constraint tabs_video_check check (
+        video ~ '^([A-Za-z0-9_-]{11}|instagram:[A-Za-z0-9_-]{5,60}|tiktok:[0-9]{10,25})$'
+    ),
     revisada boolean not null default false,
     busqueda text not null default ''
 );
