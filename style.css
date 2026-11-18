@@ -927,7 +927,7 @@ dialog .tonos label{
 /* El reproductor de Instagram suma encabezado y pie arriba y abajo del video */
 .video.instagram iframe{
     aspect-ratio: auto;
-    height: 640px;
+    height: 660px;
     background-color: white;
 }
 
