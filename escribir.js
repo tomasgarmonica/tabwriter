@@ -39,6 +39,19 @@ function cargar(){
 
 tabEl.addEventListener("input", guardar);
 
+// Tamaño de letra del cuadro (se recuerda aparte del de la página de la tab)
+let tamanoLetra = 16;
+try { tamanoLetra = parseInt(localStorage.getItem("tabwriter-letra-editor")) || 16; } catch(error){}
+
+function aplicarLetra(cambio){
+    tamanoLetra = Math.min(36, Math.max(12, tamanoLetra + cambio));
+    tabEl.style.fontSize = tamanoLetra + "px";
+    try { localStorage.setItem("tabwriter-letra-editor", tamanoLetra); } catch(error){}
+}
+document.getElementById("letra-menos").addEventListener("click", () => aplicarLetra(-2));
+document.getElementById("letra-mas").addEventListener("click", () => aplicarLetra(2));
+aplicarLetra(0);
+
 // El textarea es la fuente de verdad: así se conserva lo que se escribe a mano
 function celdaPulsada(celda){
     const texto = tabEl.value;
